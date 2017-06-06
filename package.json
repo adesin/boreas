@@ -1,5 +1,5 @@
 {
-  "name": "boreus",
+  "name": "Boreas",
   "version": "1.0.0",
   "description": "Base Application on JavaScript",
   "main": "gulpfile.js",
@@ -19,12 +19,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adesin/boreus.git"
+    "url": "git+https://github.com/adesin/boreas.git"
   },
   "author": "Anton Desin",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/adesin/boreus/issues"
+    "url": "https://github.com/adesin/boreas/issues"
   },
-  "homepage": "https://github.com/adesin/boreus#readme"
+  "homepage": "https://github.com/adesin/boreas#readme"
 }

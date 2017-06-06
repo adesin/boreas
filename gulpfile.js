@@ -5,15 +5,18 @@
  * Time: 13:44
  */
 
+'use strict'
+
 //module.paths.push('/usr/lib/node_modules');		//	Путь к модулям ноды
 
-var gulp = require('gulp'),
+const gulp = require('gulp'),
 	concat = require('gulp-concat'),
 	header = require('gulp-header'),
 	rename = require('gulp-rename'),
 	sourcemaps = require('gulp-sourcemaps'),
 	uglify = require('gulp-uglify'),
 	dotify = require('gulp-dotify'),
+	babel = require('gulp-babel'),
 	watch = require('gulp-watch'),
 	pkg = require('./package.json');
 
@@ -28,12 +31,18 @@ var banner = ['/**',
 
 gulp.task('scripts', function () {
 	gulp.src('./src/js/**/*.js')
-		.pipe(concat('boreus.js'))
+		.pipe(babel({
+			presets: ['es2015']
+		}))
+		.pipe(concat('boreas.js'))
 		.pipe(header(banner, { pkg : pkg } ))
 		.pipe(gulp.dest('.'));
 	gulp.src('./src/js/**\/*.js')
 		.pipe(sourcemaps.init())
-		.pipe(concat('boreus.min.js'))
+		.pipe(babel({
+			presets: ['es2015']
+		}))
+		.pipe(concat('boreas.min.js'))
 		.pipe(uglify())
 		.pipe(header(banner, { pkg : pkg } ))
 		.pipe(sourcemaps.write('.'))
@@ -46,4 +55,4 @@ gulp.task('watch', function () {
 	});
 });
 
-gulp.task('default', ['images', 'sprite', 'sprite-retina', 'less', 'scripts', 'templates', 'watch']);
+gulp.task('default', ['scripts', 'watch']);
