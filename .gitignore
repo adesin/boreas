@@ -1,0 +1,70 @@
+sitemap*.xml
+yandex*.html
+google*.html
+robots.txt
+web.config
+dump.html
+.htaccess
+.htpasswd
+*.wmv
+*.gz
+*.tar
+*.sql
+
+# Временные файлы
+*~
+
+# Логи
+log.txt
+# Просто не нужные в гите файлы
+/test/
+/pma/
+/bitrix_server_test.php
+
+# gulp #
+###################
+*bower_components
+*bower_components/*
+*node_modules
+*node_modules/*
+
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+*.pyc
+
+# Logs and databases #
+######################
+*.log
+
+# OS generated files #
+######################
+.DS_Store*
+ehthumbs.db
+Thumbs.db
+
+
+# Bitrix #
+######################
+
+*.cache
+*.orig
+*.swp
+*.swo
+.idea
+/.idea
+
+dump.html
+.htaccess
+*.less.cache
+
+# core
+/bitrix
+/upload
+
+/composer.lock

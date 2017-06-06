@@ -1,0 +1,30 @@
+{
+  "name": "boreus",
+  "version": "1.0.0",
+  "description": "Base Application on JavaScript",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-dotify": "^0.1.2",
+    "gulp-header": "^1.8.8",
+    "gulp-rename": "^1.2.2",
+    "gulp-uglify": "^3.0.0",
+    "gulp-sourcemaps": "^2.6.0",
+    "gulp-watch": "^4.3.11"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adesin/boreus.git"
+  },
+  "author": "Anton Desin",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adesin/boreus/issues"
+  },
+  "homepage": "https://github.com/adesin/boreus#readme"
+}
