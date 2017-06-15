@@ -7,6 +7,7 @@
 
 import module from "../lib/module";
 import imagesHandler from "./preloader/imagesHandler";
+import mediaHandler from "./preloader/mediaHandler";
 
 export default class preloader extends module {
 
@@ -21,8 +22,9 @@ export default class preloader extends module {
 				update: this.__updatePreloader,
 				hide: this.__hidePreloader,
 			},
+			media: true,    //  Обрабатывать HTML5 Media (<audio>  и <video>)
 			delay: 400,     //  Время ожидания перед скрытием прелодера
-			timeout: 10000,  //  Максимальное время загрузки (на случай зависания)
+			timeout: 10000, //  Максимальное время загрузки (на случай зависания)
 		};
 		this.__handlers = [];
 		this.__total = 0;
@@ -36,8 +38,11 @@ export default class preloader extends module {
 		this.params = Object.assign({}, this.params, params);
 		this.params.methods.show();
 
-		//  Обработчик по-умолчанию
+		//  Обработчики по-умолчанию
 		this.addHandler('images', imagesHandler);
+		if(this.params.media === true){
+			this.addHandler('media', mediaHandler);
+		}
 
 		//  Пользовательские обработчики
 		if(this.params.handlers.length){
@@ -109,7 +114,7 @@ export default class preloader extends module {
 		let status = this.__getStatus();
 		status.loaded = status.total;
 		this.params.methods.update(status);
-		_this.trigger('ready');
+		this.trigger('ready');
 
 	}
 

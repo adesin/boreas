@@ -131,11 +131,7 @@ export default class imagesHandler extends handler {
 		this.__loaded.push(src);
 		//let loadedCount = this.getLoaded();
 
-		this.trigger('progress', status/*{
-			percent: Number(parseFloat((loadedCount / totalCount) * 100).toFixed(2)),
-			total: totalCount,
-			loaded: loadedCount,
-		}*/);
+		this.trigger('progress', status);
 
 		if(status.total == status.loaded){
 			this.trigger('ready');

@@ -10,7 +10,7 @@
 
 		this.__total = 20;
 		this.__loaded = 0
-	}
+	};
 	//  Наследование от родительского класса
 	Boreas.extend(customPreloaderHandler, Boreas.preloaderHandler);
 
@@ -34,7 +34,7 @@
 				_this.trigger('ready');
 			}
 		}, 200);
-	}
+	};
 
 	/**
 	 * Метод возвращает объект, содержащий количество загруженных эелементов, а так-же общее число загружаемых элементов
@@ -45,5 +45,5 @@
 			total: this.__total,
 			loaded: this.__loaded
 		};
-	}
+	};
 })();
