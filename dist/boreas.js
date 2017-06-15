@@ -996,13 +996,18 @@ var preloader = function (_module) {
 				}
 			}
 			this.__load();
-			setTimeout(function () {
-				if (_ready === false) {
-					_this.__forceFinish();
-					_ready = true;
-				}
-			}, this.params.timeout //  На случай если загрузка длится дольше, чем указано в настройках
-			);this.on('progress', function (status) {
+
+			if (this.params.timeout > 0) {
+				setTimeout(function () {
+					if (_ready === false) {
+						_this.__forceFinish();
+						_ready = true;
+					}
+				}, this.params.timeout //  На случай если загрузка длится дольше, чем указано в настройках
+				);
+			}
+
+			this.on('progress', function (status) {
 				_this3.params.methods.update(status);
 				if (status.loaded == status.total) {
 					setTimeout(function () {
@@ -1041,10 +1046,12 @@ var preloader = function (_module) {
 	}, {
 		key: "__updatePreloader",
 		value: function __updatePreloader() {
-			var status = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.__getStatus();
+			var status = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+			if (!status) status = this.__getStatus();
 
 			var percent = parseInt(100 / status.total * status.loaded);
-			this.log(percent);
+			//this.log(percent);
 
 			this.__$preloader.find('.progress-bar').css({ width: percent + '%' }).attr('aria-valuenow', percent
 			//.text(percent+'%');

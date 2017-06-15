@@ -53,12 +53,16 @@ export default class preloader extends module {
 			}
 		}
 		this.__load();
-		setTimeout(()=>{
-			if(_ready === false){
-				_this.__forceFinish();
-				_ready = true;
-			}
-		}, this.params.timeout)  //  На случай если загрузка длится дольше, чем указано в настройках
+
+		if(this.params.timeout > 0){
+			setTimeout(()=>{
+				if(_ready === false){
+					_this.__forceFinish();
+					_ready = true;
+				}
+			}, this.params.timeout)  //  На случай если загрузка длится дольше, чем указано в настройках
+		}
+
 		this.on('progress', (status) => {
 			this.params.methods.update(status);
 			if(status.loaded == status.total){
@@ -96,9 +100,11 @@ export default class preloader extends module {
 			$('body').append(this.__$preloader);
 		}
 	}
-	__updatePreloader (status=this.__getStatus()) {
+	__updatePreloader (status=null) {
+		if(!status) status = this.__getStatus();
+
 		let percent = parseInt(100 / status.total * status.loaded);
-		this.log(percent);
+		//this.log(percent);
 
 		this.__$preloader
 			.find('.progress-bar')
