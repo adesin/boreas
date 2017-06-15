@@ -1,12 +1,4 @@
 /**
- * @author Anton Desin <anton.desin@gmail.com>
- * @link http://pirogov.ru/ Бюро Пирогова
- * Date: 06.06.2017
- * Time: 15:35
- */
-
-
-/**
  * Кастомный обработчик модуля Boreas.preloader
  */
 (function () {
@@ -25,7 +17,7 @@
 	//  Остальные методы
 
 	/**
-	 *
+	 * Инициализация обработчика
 	 * @param params
 	 */
 	customPreloaderHandler.prototype.initialize = function (params) {
@@ -41,7 +33,7 @@
 				clearInterval(ti);
 				_this.trigger('ready');
 			}
-		}, 500);
+		}, 200);
 	}
 
 	/**
@@ -55,46 +47,3 @@
 		};
 	}
 })();
-
-$(function() {
-	window['app'] = new Boreas.application({
-		modules: [
-			'loader',
-			{
-				name: 'customModule',
-				load: 'auto',
-				class: customModule
-			},
-			{
-				name: 'customModule2',
-				load: 'auto',
-				class: customModule2
-			},
-			{
-				name: 'preloader',
-				load: 'auto',
-				async: false,
-				params: {
-					handlers: [
-						//{ name: 'test', class: customPreloaderHandler }
-					]
-				}
-			}
-		]
-	});
-
-	app.on('ready', function () {
-		console.log('Application is ready now!');
-	});
-
-	app.customModule.on('ready', function(){
-		alert("Кастомный модуль на EcmaScript 5 инициализирован!");
-	});
-	app.customModule2.on('ready', function(){
-		alert("Кастомный модуль на EcmaScript 6 инициализирован!");
-	});
-
-	app.registerModule()
-
-	app.initialize();
-});

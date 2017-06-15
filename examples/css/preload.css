@@ -1,0 +1,51 @@
+/**
+ * @author Anton Desin <anton.desin@gmail.com>
+ * @link http://pirogov.ru/ Бюро Пирогова
+ * Date: 12.06.2017
+ * Time: 20:28
+ */
+
+body.boreas-preloader-opened {
+	overflow:hidden;
+}
+
+.boreas-preloader {
+	background-color: #424242;
+	position: fixed;
+	left: 0;
+	top: 0;
+	text-align: center;
+	height: 100%;
+	width: 100%;
+}
+
+.boreas-preloader .progress {
+	position: absolute;
+	width: 100%;
+	top: 50%;
+	left: 0;
+}
+.boreas-preloader .progress,
+.boreas-preloader .progress-bar {
+	height:1px;
+	border-radius:0;
+}
+
+.boreas-preloader .progress-bar {
+	-webkit-transition: all .4s ease;
+	-moz-transition: all .4s ease;
+	-o-transition: all .4s ease;
+	transition: all .4s ease;
+}
+
+
+.bg-image {
+	display:block;
+	background-size:cover;
+	padding-top:56.5%;
+}
+
+.image-1 { background-image: url('https://images4.alphacoders.com/882/88206.jpg');  }
+.image-2 {  background-image: url('https://images8.alphacoders.com/704/704885.jpg');  }
+.image-3 {  background-image: url('https://images4.alphacoders.com/744/74464.jpg');  }
+.image-4 {  background-image: url('https://images8.alphacoders.com/697/697203.jpg');  }
