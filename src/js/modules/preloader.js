@@ -110,7 +110,7 @@ export default class preloader extends module {
 	}
 
 	__forceFinish (){
-		let status = this.__getStatus();
+		let status = this.__updateStatus();
 		status.loaded = status.total;
 		this.params.methods.update(status);
 		this.trigger('ready');
@@ -131,12 +131,12 @@ export default class preloader extends module {
 		}
 	}
 
-	__updateStatus (params){
+	__updateStatus (params={}){
 		let status = {
 			total: 0,
 			loaded: 0,
-			src: params.src || null,
-			desc: params.desc || null,
+			src: (typeof params.src != 'undefined') ? status.src : null,
+			desc: (typeof params.desc != 'undefined') ? status.desc : null,
 		}
 
 		for(let i in this.__handlers) {
