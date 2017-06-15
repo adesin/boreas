@@ -60,8 +60,6 @@ export default class preloader extends module {
 			}
 		}, this.params.timeout)  //  На случай если загрузка длится дольше, чем указано в настройках
 		this.on('progress', (status) => {
-			_this.log(status);
-
 			this.params.methods.update(status);
 			if(status.loaded == status.total){
 				setTimeout(function(){

@@ -1001,8 +1001,6 @@ var preloader = function (_module) {
 				}
 			}, this.params.timeout //  На случай если загрузка длится дольше, чем указано в настройках
 			);this.on('progress', function (status) {
-				_this.log(status);
-
 				_this3.params.methods.update(status);
 				if (status.loaded == status.total) {
 					setTimeout(function () {
