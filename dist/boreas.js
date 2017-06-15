@@ -64,7 +64,7 @@ var Boreas =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 9);
+/******/ 	return __webpack_require__(__webpack_require__.s = 10);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -82,11 +82,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _base2 = __webpack_require__(3);
+var _base2 = __webpack_require__(4);
 
 var _base3 = _interopRequireDefault(_base2);
 
-var _event = __webpack_require__(8);
+var _event = __webpack_require__(9);
 
 var _event2 = _interopRequireDefault(_event);
 
@@ -506,11 +506,7 @@ var imagesHandler = function (_handler) {
 			this.__loaded.push(src);
 			//let loadedCount = this.getLoaded();
 
-			this.trigger('progress', status /*{
-                                   percent: Number(parseFloat((loadedCount / totalCount) * 100).toFixed(2)),
-                                   total: totalCount,
-                                   loaded: loadedCount,
-                                   }*/);
+			this.trigger('progress', status);
 
 			if (status.total == status.loaded) {
 				this.trigger('ready');
@@ -597,6 +593,141 @@ exports.default = imagesHandler;
 
 
 Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _handler2 = __webpack_require__(1);
+
+var _handler3 = _interopRequireDefault(_handler2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author Anton Desin <anton.desin@gmail.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @link http://pirogov.ru/ Бюро Пирогова
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Date: 15.06.2017
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Time: 18:22
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+var mediaHandler = function (_handler) {
+	_inherits(mediaHandler, _handler);
+
+	function mediaHandler() {
+		_classCallCheck(this, mediaHandler);
+
+		var _this = _possibleConstructorReturn(this, (mediaHandler.__proto__ || Object.getPrototypeOf(mediaHandler)).call(this));
+
+		_this.params = {
+			selector: 'audio, video'
+		};
+		_this.__total = 0;
+		_this.__loaded = 0;
+		return _this;
+	}
+
+	_createClass(mediaHandler, [{
+		key: 'initialize',
+		value: function initialize() {
+			var _this2 = this;
+
+			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+			this.params = Object.assign({}, this.params, params);
+
+			this.__loadMedia().done(function () {
+				_this2.trigger('ready');
+			});
+		}
+
+		/**
+   * Получение статуса загрузки
+   * @return {{total: number, loaded: number}}
+   */
+
+	}, {
+		key: 'getStatus',
+		value: function getStatus() {
+			return {
+				total: this.__total,
+				loaded: this.__loaded
+			};
+		}
+
+		/**
+   * Обработка загрузки медиа
+   * @private
+   */
+
+	}, {
+		key: '__loadMedia',
+		value: function __loadMedia() {
+			var promise = [];
+
+			$(this.params.selector).each(function () {
+				var _this3 = this;
+
+				var media = this,
+				    defer = new $.Deferred();
+
+				this.__total++;
+
+				if (video.preload == 'none') {
+					video.load();
+				}
+				video.oncanplay = function () {
+					_this3.__itemLoaded();
+					defer.resolve();
+				};
+				video.onerror = function () {
+					_this3.__itemLoaded();
+					defer.resolve();
+				};
+				promise.push(defer);
+			});
+
+			//  Если promise пуст, то создаём и резолвим пустой $.Deferred()
+			if (!promise.length) {
+				var defer = new $.Deferred();
+				defer.resolve();
+				promise.push(defer);
+			}
+
+			return $.when.apply(undefined, promise).promise();
+		}
+
+		/**
+   * Говорим что был загружен один элемент
+   * @private
+   */
+
+	}, {
+		key: '__itemLoaded',
+		value: function __itemLoaded() {
+			this.__loaded++;
+			var status = this.getStatus();
+			this.trigger('progress', status);
+		}
+	}]);
+
+	return mediaHandler;
+}(_handler3.default);
+
+exports.default = mediaHandler;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
@@ -633,7 +764,7 @@ var base = function () {
 exports.default = base;
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -765,7 +896,7 @@ var loader = function (_module) {
 exports.default = loader;
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -784,6 +915,10 @@ var _module4 = _interopRequireDefault(_module3);
 var _imagesHandler = __webpack_require__(2);
 
 var _imagesHandler2 = _interopRequireDefault(_imagesHandler);
+
+var _mediaHandler = __webpack_require__(3);
+
+var _mediaHandler2 = _interopRequireDefault(_mediaHandler);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -814,6 +949,7 @@ var preloader = function (_module) {
 				update: _this2.__updatePreloader,
 				hide: _this2.__hidePreloader
 			},
+			media: true, //  Обрабатывать HTML5 Media (<audio>  и <video>)
 			delay: 400, //  Время ожидания перед скрытием прелодера
 			timeout: 10000 //  Максимальное время загрузки (на случай зависания)
 		};
@@ -836,8 +972,11 @@ var preloader = function (_module) {
 			this.params = Object.assign({}, this.params, params);
 			this.params.methods.show();
 
-			//  Обработчик по-умолчанию
+			//  Обработчики по-умолчанию
 			this.addHandler('images', _imagesHandler2.default);
+			if (this.params.media === true) {
+				this.addHandler('media', _mediaHandler2.default);
+			}
 
 			//  Пользовательские обработчики
 			if (this.params.handlers.length) {
@@ -913,7 +1052,7 @@ var preloader = function (_module) {
 			var status = this.__getStatus();
 			status.loaded = status.total;
 			this.params.methods.update(status);
-			_this.trigger('ready');
+			this.trigger('ready');
 		}
 	}, {
 		key: "__load",
@@ -953,7 +1092,7 @@ var preloader = function (_module) {
 exports.default = preloader;
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1057,7 +1196,7 @@ var application = function (_module) {
 				if (typeof moduleItem.class != 'undefined') {
 					_this3[moduleItem.name] = new moduleItem.class();
 				} else {
-					moduleClass = __webpack_require__(10)("./" + moduleItem.name).default;
+					moduleClass = __webpack_require__(11)("./" + moduleItem.name).default;
 					_this3[moduleItem.name] = new moduleClass();
 				}
 			});
@@ -1175,7 +1314,7 @@ var application = function (_module) {
 exports.default = application;
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1211,7 +1350,7 @@ function extend(subClass, superClass) {
 }
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1225,7 +1364,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _base2 = __webpack_require__(3);
+var _base2 = __webpack_require__(4);
 
 var _base3 = _interopRequireDefault(_base2);
 
@@ -1336,7 +1475,7 @@ var event = function (_base) {
 exports.default = event;
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1347,7 +1486,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.preloaderHandler = exports.extend = exports.module = exports.application = undefined;
 
-var _application = __webpack_require__(6);
+var _application = __webpack_require__(7);
 
 var _application2 = _interopRequireDefault(_application);
 
@@ -1359,7 +1498,7 @@ var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _extend = __webpack_require__(7);
+var _extend = __webpack_require__(8);
 
 var _extend2 = _interopRequireDefault(_extend);
 
@@ -1378,18 +1517,20 @@ exports.extend = _extend2.default;
 exports.preloaderHandler = _handler2.default;
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./loader": 4,
-	"./loader.js": 4,
-	"./preloader": 5,
-	"./preloader.js": 5,
+	"./loader": 5,
+	"./loader.js": 5,
+	"./preloader": 6,
+	"./preloader.js": 6,
 	"./preloader/handler": 1,
 	"./preloader/handler.js": 1,
 	"./preloader/imagesHandler": 2,
-	"./preloader/imagesHandler.js": 2
+	"./preloader/imagesHandler.js": 2,
+	"./preloader/mediaHandler": 3,
+	"./preloader/mediaHandler.js": 3
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -1405,7 +1546,7 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 10;
+webpackContext.id = 11;
 
 /***/ })
 /******/ ]);
