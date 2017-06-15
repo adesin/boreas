@@ -19,10 +19,11 @@ export default class mediaHandler extends handler {
 	}
 
 	initialize (params = {}) {
+		let scope = this;
 		this.params = Object.assign({}, this.params, params);
 
 		this.__loadMedia().done(() => {
-			this.trigger('ready');
+			scope.trigger('ready');
 		});
 	}
 
@@ -35,6 +36,7 @@ export default class mediaHandler extends handler {
 			total: this.__total,
 			loaded: this.__loaded,
 			src: null,
+			desc: null,
 		};
 	}
 
@@ -43,23 +45,24 @@ export default class mediaHandler extends handler {
 	 * @private
 	 */
 	__loadMedia () {
-		let promise = [];
+		let scope = this,
+			promise = [];
 
 		$(this.params.selector).each(function(){
 			let media = this,
 				defer = new $.Deferred();
 
-			this.__total++;
+			scope.__total++;
 
-			if(video.preload == 'none'){
-				video.load();
+			if(media.preload == 'none'){
+				media.load();
 			}
-			video.oncanplay = () => {
-				this.__itemLoaded(video.currentSrc);
+			media.oncanplay = () => {
+				scope.__itemLoaded(media.currentSrc);
 				defer.resolve();
 			};
-			video.onerror = () => {
-				this.__itemLoaded(video.currentSrc);
+			media.onerror = () => {
+				scope.__itemLoaded(media.currentSrc);
 				defer.resolve();
 			};
 			promise.push(defer);

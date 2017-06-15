@@ -59,8 +59,9 @@ export default class preloader extends module {
 				_ready = true;
 			}
 		}, this.params.timeout)  //  На случай если загрузка длится дольше, чем указано в настройках
-		this.on('progress', (params) => {
-			let status = _this.__getStatus();
+		this.on('progress', (status) => {
+			_this.log(status);
+
 			this.params.methods.update(status);
 			if(status.loaded == status.total){
 				setTimeout(function(){
@@ -124,17 +125,20 @@ export default class preloader extends module {
 		for(let i in this.__handlers){
 			this.__handlers[i].instance = new this.__handlers[i].class();
 			this.__handlers[i].instance.on('progress', (params) => {
-				_this.trigger('progress', _this.__getStatus());
+				_this.__updateStatus(params)
+				_this.trigger('progress', _this.__updateStatus(params));
 			});
 
 			this.__handlers[i].instance.initialize(this.__handlers[i].params);
 		}
 	}
 
-	__getStatus (){
+	__updateStatus (params){
 		let status = {
 			total: 0,
 			loaded: 0,
+			src: params.src || null,
+			desc: params.desc || null,
 		}
 
 		for(let i in this.__handlers) {

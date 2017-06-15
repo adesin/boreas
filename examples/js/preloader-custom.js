@@ -27,7 +27,7 @@
 		var ti = setInterval(function(){
 			_this.__loaded += 1;
 			var status = _this.getStatus();
-
+			status.desc = "element #"+_this.__loaded;
 			_this.trigger('progress', status);
 			if(status.loaded == status.total){
 				clearInterval(ti);
@@ -43,7 +43,9 @@
 	customPreloaderHandler.prototype.getStatus = function(){
 		return {
 			total: this.__total,
-			loaded: this.__loaded
+			loaded: this.__loaded,
+			src: null,
+			desc: null,
 		};
 	};
 })();

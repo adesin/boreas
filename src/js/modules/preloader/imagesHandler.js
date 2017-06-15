@@ -57,6 +57,7 @@ export default class imagesHandler extends handler {
 			total: this.__found.image.length,
 			loaded: this.__loaded.length,
 			src: null,
+			desc: null,
 		};
 	}
 
@@ -113,7 +114,7 @@ export default class imagesHandler extends handler {
 
 		for(let i in this.__found.image){
 			this.__loadFileAsync(this.__found.image[i]).promise().done(() => {
-				this.__updateStatus(this.__found.image);
+				this.__updateStatus(this.__found.image[i]);
 			});
 		}
 	}

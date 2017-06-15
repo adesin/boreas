@@ -418,7 +418,8 @@ var imagesHandler = function (_handler) {
 			return {
 				total: this.__found.image.length,
 				loaded: this.__loaded.length,
-				src: null
+				src: null,
+				desc: null
 			};
 		}
 
@@ -484,10 +485,14 @@ var imagesHandler = function (_handler) {
 			if (!this.__found.image.length) return;
 			var promise = [];
 
-			for (var i in this.__found.image) {
-				this.__loadFileAsync(this.__found.image[i]).promise().done(function () {
-					_this4.__updateStatus(_this4.__found.image);
+			var _loop = function _loop(i) {
+				_this4.__loadFileAsync(_this4.__found.image[i]).promise().done(function () {
+					_this4.__updateStatus(_this4.__found.image[i]);
 				});
+			};
+
+			for (var i in this.__found.image) {
+				_loop(i);
 			}
 		}
 
@@ -635,14 +640,13 @@ var mediaHandler = function (_handler) {
 	_createClass(mediaHandler, [{
 		key: 'initialize',
 		value: function initialize() {
-			var _this2 = this;
-
 			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
+			var scope = this;
 			this.params = Object.assign({}, this.params, params);
 
 			this.__loadMedia().done(function () {
-				_this2.trigger('ready');
+				scope.trigger('ready');
 			});
 		}
 
@@ -657,7 +661,8 @@ var mediaHandler = function (_handler) {
 			return {
 				total: this.__total,
 				loaded: this.__loaded,
-				src: null
+				src: null,
+				desc: null
 			};
 		}
 
@@ -669,25 +674,24 @@ var mediaHandler = function (_handler) {
 	}, {
 		key: '__loadMedia',
 		value: function __loadMedia() {
-			var promise = [];
+			var scope = this,
+			    promise = [];
 
 			$(this.params.selector).each(function () {
-				var _this3 = this;
-
 				var media = this,
 				    defer = new $.Deferred();
 
-				this.__total++;
+				scope.__total++;
 
-				if (video.preload == 'none') {
-					video.load();
+				if (media.preload == 'none') {
+					media.load();
 				}
-				video.oncanplay = function () {
-					_this3.__itemLoaded(video.currentSrc);
+				media.oncanplay = function () {
+					scope.__itemLoaded(media.currentSrc);
 					defer.resolve();
 				};
-				video.onerror = function () {
-					_this3.__itemLoaded(video.currentSrc);
+				media.onerror = function () {
+					scope.__itemLoaded(media.currentSrc);
 					defer.resolve();
 				};
 				promise.push(defer);
@@ -996,8 +1000,9 @@ var preloader = function (_module) {
 					_ready = true;
 				}
 			}, this.params.timeout //  На случай если загрузка длится дольше, чем указано в настройках
-			);this.on('progress', function (params) {
-				var status = _this.__getStatus();
+			);this.on('progress', function (status) {
+				_this.log(status);
+
 				_this3.params.methods.update(status);
 				if (status.loaded == status.total) {
 					setTimeout(function () {
@@ -1065,18 +1070,21 @@ var preloader = function (_module) {
 			for (var i in this.__handlers) {
 				this.__handlers[i].instance = new this.__handlers[i].class();
 				this.__handlers[i].instance.on('progress', function (params) {
-					_this.trigger('progress', _this.__getStatus());
+					_this.__updateStatus(params);
+					_this.trigger('progress', _this.__updateStatus(params));
 				});
 
 				this.__handlers[i].instance.initialize(this.__handlers[i].params);
 			}
 		}
 	}, {
-		key: "__getStatus",
-		value: function __getStatus() {
+		key: "__updateStatus",
+		value: function __updateStatus(params) {
 			var status = {
 				total: 0,
-				loaded: 0
+				loaded: 0,
+				src: params.src || null,
+				desc: params.desc || null
 			};
 
 			for (var i in this.__handlers) {
