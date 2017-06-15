@@ -25,7 +25,6 @@ export default class preloader extends module {
 			timeout: 10000,  //  Максимальное время загрузки (на случай зависания)
 		};
 		this.__handlers = [];
-		this.__progress = {};
 		this.__total = 0;
 		this.__loaded = 0;
 		this.__$preloader = null;
@@ -41,9 +40,9 @@ export default class preloader extends module {
 		this.addHandler('images', imagesHandler);
 
 		//  Пользовательские обработчики
-		if(params.handlers.length){
-			for(let i in params.handlers){
-				let handler = params.handlers[i];
+		if(this.params.handlers.length){
+			for(let i in this.params.handlers){
+				let handler = this.params.handlers[i];
 				if(typeof handler.params == 'undefined') handler.params = {};
 				this.addHandler(handler.name, handler.class, handler.params);
 			}
