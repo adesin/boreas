@@ -308,7 +308,7 @@ var handler = function (_module) {
 
       this.params = Object.assign({}, this.params, params);
 
-      this.trigger('progress', { percent: 100 });
+      this.trigger('progress', this.getStatus());
       this.trigger('ready');
     }
   }, {
@@ -316,7 +316,8 @@ var handler = function (_module) {
     value: function getStatus() {
       return {
         total: 0,
-        loaded: 0
+        loaded: 0,
+        src: null
       };
     }
   }]);

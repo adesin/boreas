@@ -28,14 +28,15 @@ export default class handler extends module {
 	initialize (params={}) {
 		this.params = Object.assign({}, this.params, params);
 
-		this.trigger('progress', { percent: 100 });
+		this.trigger('progress', this.getStatus());
 		this.trigger('ready');
 	}
 
 	getStatus () {
 		return {
 			total: 0,
-			loaded: 0
+			loaded: 0,
+			src: null,
 		};
 	}
 
