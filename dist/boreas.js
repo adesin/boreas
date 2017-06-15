@@ -992,7 +992,8 @@ var defaults = {
 			'param1': 'value1',
 			'param2': 'value2'
 		}
-	}]
+	}],
+	modulesDataAttribute: 'boreas-modules'
 },
     moduleDefaults = {
 	name: null,
@@ -1129,20 +1130,22 @@ var application = function (_module) {
 	}, {
 		key: '__isModuleEnabled',
 		value: function __isModuleEnabled(moduleItem) {
-			var _this = this,
-			    modules = void 0;
+			var _this = this;
 
 			if (moduleItem.load === true) {
 				// Модуль включён
 				return true;
 			} else if (moduleItem.load === 'auto') {
 				// Автоматический ражим загрузки модуля
-				var modulesData = this.$container.data('boreas-modules');
-				if (modulesData) {
-					modules = modulesData.split(" ");
-					if (modules.indexOf(moduleItem.name) !== -1) {
-						return true;
-					}
+				var modules = [];
+
+				$('[data-' + this.params.modulesDataAttribute + ']').each(function () {
+					var data = $(this).data(_this.params.modulesDataAttribute).split(" ");
+					modules = modules.concat(data);
+				});
+
+				if (modules.indexOf(moduleItem.name) !== -1) {
+					return true;
 				}
 			}
 			return false;

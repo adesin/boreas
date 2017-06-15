@@ -22,7 +22,8 @@ let defaults = {
 			* Или так:
 			'loader',
 			*/
-		]
+		],
+		modulesDataAttribute: 'boreas-modules',
 	},
 	moduleDefaults = {
 		name: null,
@@ -39,10 +40,7 @@ export default class application extends module {
 	constructor(params = {}){
 		super();
 		this.params = Object.assign({}, defaults, params);
-		this.$container = $('html');
-
 		this.__includeModules(this.params.modules);
-
 	}
 
 	/**
@@ -130,18 +128,20 @@ export default class application extends module {
 	}
 
 	__isModuleEnabled (moduleItem){
-		let _this = this,
-			modules;
+		let _this = this;
 
 		if(moduleItem.load === true){   // Модуль включён
 			return true;
 		}else if(moduleItem.load === 'auto'){   // Автоматический ражим загрузки модуля
-			let modulesData = this.$container.data('boreas-modules');
-			if(modulesData){
-				modules = modulesData.split(" ");
-				if(modules.indexOf(moduleItem.name) !== -1){
-					return true;
-				}
+			let modules = [];
+
+			$('[data-'+this.params.modulesDataAttribute+']').each(function(){
+				let data = $(this).data(_this.params.modulesDataAttribute).split(" ");
+				modules = modules.concat(data);
+			});
+
+			if(modules.indexOf(moduleItem.name) !== -1){
+				return true;
 			}
 		}
 		return false;
