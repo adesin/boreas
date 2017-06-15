@@ -33,7 +33,8 @@ export default class mediaHandler extends handler {
 	getStatus (){
 		return {
 			total: this.__total,
-			loaded: this.__loaded
+			loaded: this.__loaded,
+			src: null,
 		};
 	}
 
@@ -54,11 +55,11 @@ export default class mediaHandler extends handler {
 				video.load();
 			}
 			video.oncanplay = () => {
-				this.__itemLoaded();
+				this.__itemLoaded(video.currentSrc);
 				defer.resolve();
 			};
 			video.onerror = () => {
-				this.__itemLoaded();
+				this.__itemLoaded(video.currentSrc);
 				defer.resolve();
 			};
 			promise.push(defer);
@@ -78,9 +79,10 @@ export default class mediaHandler extends handler {
 	 * Говорим что был загружен один элемент
 	 * @private
 	 */
-	__itemLoaded (){
+	__itemLoaded (src){
 		this.__loaded++;
 		let status = this.getStatus();
+		status.src = src;
 		this.trigger('progress', status);
 	}
 }

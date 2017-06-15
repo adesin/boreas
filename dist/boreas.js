@@ -416,7 +416,8 @@ var imagesHandler = function (_handler) {
 		value: function getStatus() {
 			return {
 				total: this.__found.image.length,
-				loaded: this.__loaded.length
+				loaded: this.__loaded.length,
+				src: null
 			};
 		}
 
@@ -498,14 +499,13 @@ var imagesHandler = function (_handler) {
 	}, {
 		key: "__updateStatus",
 		value: function __updateStatus(src) {
-			//let totalCount = this.getTotal();
-			var status = this.getStatus();
 			if (!this.__loaded) {
 				this.__loaded = [];
 			}
 			this.__loaded.push(src);
-			//let loadedCount = this.getLoaded();
 
+			var status = this.getStatus();
+			status.src = src;
 			this.trigger('progress', status);
 
 			if (status.total == status.loaded) {
@@ -655,7 +655,8 @@ var mediaHandler = function (_handler) {
 		value: function getStatus() {
 			return {
 				total: this.__total,
-				loaded: this.__loaded
+				loaded: this.__loaded,
+				src: null
 			};
 		}
 
@@ -681,11 +682,11 @@ var mediaHandler = function (_handler) {
 					video.load();
 				}
 				video.oncanplay = function () {
-					_this3.__itemLoaded();
+					_this3.__itemLoaded(video.currentSrc);
 					defer.resolve();
 				};
 				video.onerror = function () {
-					_this3.__itemLoaded();
+					_this3.__itemLoaded(video.currentSrc);
 					defer.resolve();
 				};
 				promise.push(defer);
@@ -708,9 +709,10 @@ var mediaHandler = function (_handler) {
 
 	}, {
 		key: '__itemLoaded',
-		value: function __itemLoaded() {
+		value: function __itemLoaded(src) {
 			this.__loaded++;
 			var status = this.getStatus();
+			status.src = src;
 			this.trigger('progress', status);
 		}
 	}]);

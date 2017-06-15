@@ -55,7 +55,8 @@ export default class imagesHandler extends handler {
 	getStatus (){
 		return {
 			total: this.__found.image.length,
-			loaded: this.__loaded.length
+			loaded: this.__loaded.length,
+			src: null,
 		};
 	}
 
@@ -123,14 +124,13 @@ export default class imagesHandler extends handler {
 	 * @private
 	 */
 	__updateStatus (src) {
-		//let totalCount = this.getTotal();
-		let status = this.getStatus();
 		if(!this.__loaded) {
 			this.__loaded = [];
 		}
 		this.__loaded.push(src);
-		//let loadedCount = this.getLoaded();
 
+		let status = this.getStatus();
+		status.src = src;
 		this.trigger('progress', status);
 
 		if(status.total == status.loaded){
