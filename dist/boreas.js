@@ -689,10 +689,12 @@ var mediaHandler = function (_handler) {
 				media.oncanplay = function () {
 					scope.__itemLoaded(media.currentSrc);
 					defer.resolve();
+					media.oncanplay = null;
 				};
 				media.onerror = function () {
 					scope.__itemLoaded(media.currentSrc);
 					defer.resolve();
+					media.onerror = null;
 				};
 				promise.push(defer);
 			});
@@ -1042,6 +1044,8 @@ var preloader = function (_module) {
 			var status = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.__getStatus();
 
 			var percent = parseInt(100 / status.total * status.loaded);
+			this.log(percent);
+
 			this.__$preloader.find('.progress-bar').css({ width: percent + '%' }).attr('aria-valuenow', percent
 			//.text(percent+'%');
 			);

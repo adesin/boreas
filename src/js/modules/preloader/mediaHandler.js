@@ -60,10 +60,12 @@ export default class mediaHandler extends handler {
 			media.oncanplay = () => {
 				scope.__itemLoaded(media.currentSrc);
 				defer.resolve();
+				media.oncanplay = null;
 			};
 			media.onerror = () => {
 				scope.__itemLoaded(media.currentSrc);
 				defer.resolve();
+				media.onerror = null;
 			};
 			promise.push(defer);
 		});

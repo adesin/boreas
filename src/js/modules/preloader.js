@@ -98,6 +98,8 @@ export default class preloader extends module {
 	}
 	__updatePreloader (status=this.__getStatus()) {
 		let percent = parseInt(100 / status.total * status.loaded);
+		this.log(percent);
+
 		this.__$preloader
 			.find('.progress-bar')
 			.css({width: percent+'%'})
