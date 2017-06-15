@@ -75,86 +75,6 @@ var Boreas =
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _module3 = __webpack_require__(1);
-
-var _module4 = _interopRequireDefault(_module3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author Anton Desin <anton.desin@gmail.com>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @link http://pirogov.ru/ Бюро Пирогова
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Date: 13.06.2017
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Time: 9:37
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
-
-/**
- * Данный абстрактный класс используется для наследования от него обработчиков модуля preloader
- *
- * Обязатенльные методы:
- * initialize() - Производоит инициализацию обработчика
- * getStatus() - объект { total: N1, loaded: N2 }, где N1 - общее число загружаемых элементов, а N2 - число загруженных на данный момент  элементов
- *
- * Обязательно должны выполняться события:
- * progress - отдаёт прелодеру новое число загруженных элементов
- * ready - сообщает прелодеру, что обработчик загрузил все элементы
- *
- */
-var handler = function (_module) {
-  _inherits(handler, _module);
-
-  function handler() {
-    _classCallCheck(this, handler);
-
-    var _this = _possibleConstructorReturn(this, (handler.__proto__ || Object.getPrototypeOf(handler)).call(this));
-
-    _this.__registerEvents(['progress', 'start']);
-    return _this;
-  }
-
-  _createClass(handler, [{
-    key: 'initialize',
-    value: function initialize() {
-      var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-      this.params = Object.assign({}, this.params, params);
-
-      this.trigger('progress', this.getStatus());
-      this.trigger('ready');
-    }
-  }, {
-    key: 'getStatus',
-    value: function getStatus() {
-      return {
-        total: 0,
-        loaded: 0,
-        src: null
-      };
-    }
-  }]);
-
-  return handler;
-}(_module4.default);
-
-exports.default = handler;
-
-/***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
@@ -162,7 +82,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _base2 = __webpack_require__(2);
+var _base2 = __webpack_require__(4);
 
 var _base3 = _interopRequireDefault(_base2);
 
@@ -328,7 +248,7 @@ var _module = function (_base) {
 exports.default = _module;
 
 /***/ }),
-/* 2 */
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -340,170 +260,75 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _module3 = __webpack_require__(0);
+
+var _module4 = _interopRequireDefault(_module3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-/**
- * Базовый класс. От него наследуются все классы приложения
- *
- * @author Anton Desin <anton.desin@gmail.com>
- * @link http://pirogov.ru/ Бюро Пирогова
- * Date: 09.06.2017
- * Time: 9:24
- */
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-var base = function () {
-  function base() {
-    _classCallCheck(this, base);
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author Anton Desin <anton.desin@gmail.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @link http://pirogov.ru/ Бюро Пирогова
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Date: 13.06.2017
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Time: 9:37
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+/**
+ * Данный абстрактный класс используется для наследования от него обработчиков модуля preloader
+ *
+ * Обязатенльные методы:
+ * initialize() - Производоит инициализацию обработчика
+ * getStatus() - объект { total: N1, loaded: N2 }, где N1 - общее число загружаемых элементов, а N2 - число загруженных на данный момент  элементов
+ *
+ * Обязательно должны выполняться события:
+ * progress - отдаёт прелодеру новое число загруженных элементов
+ * ready - сообщает прелодеру, что обработчик загрузил все элементы
+ *
+ */
+var handler = function (_module) {
+  _inherits(handler, _module);
+
+  function handler() {
+    _classCallCheck(this, handler);
+
+    var _this = _possibleConstructorReturn(this, (handler.__proto__ || Object.getPrototypeOf(handler)).call(this));
+
+    _this.__registerEvents(['progress', 'start']);
+    return _this;
   }
 
-  _createClass(base, [{
-    key: "log",
-    value: function log(message) {
-      if (console && console.log) {
-        console.log(message);
-      }
+  _createClass(handler, [{
+    key: 'initialize',
+    value: function initialize() {
+      var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      this.params = Object.assign({}, this.params, params);
+
+      this.trigger('progress', this.getStatus());
+      this.trigger('ready');
+    }
+  }, {
+    key: 'getStatus',
+    value: function getStatus() {
+      return {
+        total: 0,
+        loaded: 0,
+        src: null
+      };
     }
   }]);
 
-  return base;
-}();
-
-exports.default = base;
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _module3 = __webpack_require__(1);
-
-var _module4 = _interopRequireDefault(_module3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Класс loader
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Выполняет отображение и скрытие индикатора загрузки
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Внимание! Для работы данного класса должна быть загружена и инициализирована библиотека CJSCore из 1C-Битрикс
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author Anton Desin <anton.desin@gmail.com>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @link http://pirogov.ru/ Бюро Пирогова
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Date: 06.06.2017
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Time: 14:49
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
-
-var __isLoading = 0;
-
-var loader = function (_module) {
-	_inherits(loader, _module);
-
-	function loader() {
-		_classCallCheck(this, loader);
-
-		return _possibleConstructorReturn(this, (loader.__proto__ || Object.getPrototypeOf(loader)).apply(this, arguments));
-	}
-
-	_createClass(loader, [{
-		key: "process",
-
-
-		/**
-   *  Метод показывает или прячет загрузчик
-   * @param show
-   */
-		value: function process() {
-			var show = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-			if (show) {
-				this.show();
-			} else {
-				this.hide();
-			}
-		}
-
-		/**
-   *  Метод показывает загрузчик или прибавляет счётчик
-   */
-
-	}, {
-		key: "show",
-		value: function show() {
-			__isLoading++;
-			if (__isLoading === 1) {
-				this.__showLoader();
-			}
-		}
-
-		/**
-   *  Метод скрывает загрузчик, или отнимает счётчик
-   */
-
-	}, {
-		key: "hide",
-		value: function hide() {
-			if (__isLoading > 0) {
-				__isLoading--;
-			}
-			if (__isLoading === 0) {
-				this.__hideLoader();
-			}
-		}
-
-		/**
-   * Метод отвечает непосредственно за отображение индикатора загрузки
-   * @private
-   */
-
-	}, {
-		key: "__showLoader",
-		value: function __showLoader() {
-			if (typeof BX != 'undefined') {
-				BX.showWait();
-			} else {
-				if (console && console.log) {
-					console.log("Для работы данного метода должна быть загружена и инициализирована библиотека CJSCore из 1C-Битрикс");
-				}
-			}
-		}
-
-		/**
-   * Метод отвечает непосредственно за скрытие индикатора загрузки
-   * @private
-   */
-
-	}, {
-		key: "__hideLoader",
-		value: function __hideLoader() {
-			if (typeof BX != 'undefined') {
-				BX.showWait();
-			} else {
-				if (console && console.log) {
-					console.log("Для работы данного метода должна быть загружена и инициализирована библиотека CJSCore из 1C-Битрикс");
-				}
-			}
-		}
-	}]);
-
-	return loader;
+  return handler;
 }(_module4.default);
 
-exports.default = loader;
+exports.default = handler;
 
 /***/ }),
-/* 4 */
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -515,207 +340,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _module3 = __webpack_require__(1);
-
-var _module4 = _interopRequireDefault(_module3);
-
-var _imagesHandler = __webpack_require__(5);
-
-var _imagesHandler2 = _interopRequireDefault(_imagesHandler);
-
-var _mediaHandler = __webpack_require__(6);
-
-var _mediaHandler2 = _interopRequireDefault(_mediaHandler);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author Anton Desin <anton.desin@gmail.com>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @link http://pirogov.ru/ Бюро Пирогова
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Date: 06.06.2017
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Time: 17:01
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
-
-var preloader = function (_module) {
-	_inherits(preloader, _module);
-
-	function preloader() {
-		_classCallCheck(this, preloader);
-
-		var _this2 = _possibleConstructorReturn(this, (preloader.__proto__ || Object.getPrototypeOf(preloader)).call(this));
-
-		_this2.__registerEvents(['progress']);
-		_this2.params = {
-			handlers: [], //  Дополнительные обработчики
-			methods: { //  Методы для работы с представлениям, для переопределения
-				show: _this2.__showPreloader,
-				update: _this2.__updatePreloader,
-				hide: _this2.__hidePreloader
-			},
-			media: true, //  Обрабатывать HTML5 Media (<audio>  и <video>)
-			delay: 400, //  Время ожидания перед скрытием прелодера
-			timeout: 10000 //  Максимальное время загрузки (на случай зависания)
-		};
-		_this2.__handlers = [];
-		_this2.__total = 0;
-		_this2.__loaded = 0;
-		_this2.__$preloader = null;
-		return _this2;
-	}
-
-	_createClass(preloader, [{
-		key: "initialize",
-		value: function initialize() {
-			var _this3 = this;
-
-			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-			var _this = this,
-			    _ready = false;
-			this.params = Object.assign({}, this.params, params);
-			this.params.methods.show();
-
-			//  Обработчики по-умолчанию
-			this.addHandler('images', _imagesHandler2.default);
-			if (this.params.media === true) {
-				this.addHandler('media', _mediaHandler2.default);
-			}
-
-			//  Пользовательские обработчики
-			if (this.params.handlers.length) {
-				for (var i in this.params.handlers) {
-					var handler = this.params.handlers[i];
-					if (typeof handler.params == 'undefined') handler.params = {};
-					this.addHandler(handler.name, handler.class, handler.params);
-				}
-			}
-			this.__load();
-			setTimeout(function () {
-				if (_ready === false) {
-					_this.__forceFinish();
-					_ready = true;
-				}
-			}, this.params.timeout //  На случай если загрузка длится дольше, чем указано в настройках
-			);this.on('progress', function (status) {
-				_this3.params.methods.update(status);
-				if (status.loaded == status.total) {
-					setTimeout(function () {
-						if (_ready === false) {
-							_this.trigger('ready');
-							_ready = true;
-						}
-					}, _this.params.delay);
-				}
-			});
-			this.on('ready', function () {
-				_this3.params.methods.hide();
-			});
-		}
-	}, {
-		key: "addHandler",
-		value: function addHandler(name, handlerClass) {
-			var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-			this.__handlers.push({
-				name: name,
-				class: handlerClass,
-				params: params
-			});
-		}
-	}, {
-		key: "__showPreloader",
-		value: function __showPreloader() {
-			$('body').addClass('boreas-preloader-opened');
-			this.__$preloader = $('.boreas-preloader');
-			if (!this.__$preloader.length) {
-				this.__$preloader = $("<div class=\"boreas-preloader\">\n\t\t\t\t<div class=\"progress\">\n\t\t\t\t\t<div class=\"progress-bar\" role=\"progressbar\" style=\"width: 0%\"></div>\n\t\t\t\t</div>\n\t\t\t</div>");
-				$('body').append(this.__$preloader);
-			}
-		}
-	}, {
-		key: "__updatePreloader",
-		value: function __updatePreloader() {
-			var status = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.__getStatus();
-
-			var percent = parseInt(100 / status.total * status.loaded);
-			this.__$preloader.find('.progress-bar').css({ width: percent + '%' }).attr('aria-valuenow', percent
-			//.text(percent+'%');
-			);
-		}
-	}, {
-		key: "__hidePreloader",
-		value: function __hidePreloader() {
-			$('body').removeClass('boreas-preloader-opened');
-			this.__$preloader.fadeOut();
-		}
-	}, {
-		key: "__forceFinish",
-		value: function __forceFinish() {
-			var status = this.__updateStatus();
-			status.loaded = status.total;
-			this.params.methods.update(status);
-			this.trigger('ready');
-		}
-	}, {
-		key: "__load",
-		value: function __load() {
-			var _this = this;
-
-			for (var i in this.__handlers) {
-				this.__handlers[i].instance = new this.__handlers[i].class();
-				this.__handlers[i].instance.on('progress', function (params) {
-					_this.__updateStatus(params);
-					_this.trigger('progress', _this.__updateStatus(params));
-				});
-
-				this.__handlers[i].instance.initialize(this.__handlers[i].params);
-			}
-		}
-	}, {
-		key: "__updateStatus",
-		value: function __updateStatus() {
-			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-			var status = {
-				total: 0,
-				loaded: 0,
-				src: typeof params.src != 'undefined' ? status.src : null,
-				desc: typeof params.desc != 'undefined' ? status.desc : null
-			};
-
-			for (var i in this.__handlers) {
-				var handlerStatus = this.__handlers[i].instance.getStatus();
-				status.total += handlerStatus.total;
-				status.loaded += handlerStatus.loaded;
-			}
-
-			return status;
-		}
-	}]);
-
-	return preloader;
-}(_module4.default);
-
-exports.default = preloader;
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _handler2 = __webpack_require__(0);
+var _handler2 = __webpack_require__(1);
 
 var _handler3 = _interopRequireDefault(_handler2);
 
@@ -967,7 +592,7 @@ var imagesHandler = function (_handler) {
 exports.default = imagesHandler;
 
 /***/ }),
-/* 6 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -979,7 +604,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _handler2 = __webpack_require__(0);
+var _handler2 = __webpack_require__(1);
 
 var _handler3 = _interopRequireDefault(_handler2);
 
@@ -1103,6 +728,381 @@ var mediaHandler = function (_handler) {
 exports.default = mediaHandler;
 
 /***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Базовый класс. От него наследуются все классы приложения
+ *
+ * @author Anton Desin <anton.desin@gmail.com>
+ * @link http://pirogov.ru/ Бюро Пирогова
+ * Date: 09.06.2017
+ * Time: 9:24
+ */
+
+var base = function () {
+  function base() {
+    _classCallCheck(this, base);
+  }
+
+  _createClass(base, [{
+    key: "log",
+    value: function log(message) {
+      if (console && console.log) {
+        console.log(message);
+      }
+    }
+  }]);
+
+  return base;
+}();
+
+exports.default = base;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _module3 = __webpack_require__(0);
+
+var _module4 = _interopRequireDefault(_module3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Класс loader
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Выполняет отображение и скрытие индикатора загрузки
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Внимание! Для работы данного класса должна быть загружена и инициализирована библиотека CJSCore из 1C-Битрикс
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author Anton Desin <anton.desin@gmail.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @link http://pirogov.ru/ Бюро Пирогова
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Date: 06.06.2017
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Time: 14:49
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+var __isLoading = 0;
+
+var loader = function (_module) {
+	_inherits(loader, _module);
+
+	function loader() {
+		_classCallCheck(this, loader);
+
+		return _possibleConstructorReturn(this, (loader.__proto__ || Object.getPrototypeOf(loader)).apply(this, arguments));
+	}
+
+	_createClass(loader, [{
+		key: "process",
+
+
+		/**
+   *  Метод показывает или прячет загрузчик
+   * @param show
+   */
+		value: function process() {
+			var show = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+			if (show) {
+				this.show();
+			} else {
+				this.hide();
+			}
+		}
+
+		/**
+   *  Метод показывает загрузчик или прибавляет счётчик
+   */
+
+	}, {
+		key: "show",
+		value: function show() {
+			__isLoading++;
+			if (__isLoading === 1) {
+				this.__showLoader();
+			}
+		}
+
+		/**
+   *  Метод скрывает загрузчик, или отнимает счётчик
+   */
+
+	}, {
+		key: "hide",
+		value: function hide() {
+			if (__isLoading > 0) {
+				__isLoading--;
+			}
+			if (__isLoading === 0) {
+				this.__hideLoader();
+			}
+		}
+
+		/**
+   * Метод отвечает непосредственно за отображение индикатора загрузки
+   * @private
+   */
+
+	}, {
+		key: "__showLoader",
+		value: function __showLoader() {
+			if (typeof BX != 'undefined') {
+				BX.showWait();
+			} else {
+				if (console && console.log) {
+					console.log("Для работы данного метода должна быть загружена и инициализирована библиотека CJSCore из 1C-Битрикс");
+				}
+			}
+		}
+
+		/**
+   * Метод отвечает непосредственно за скрытие индикатора загрузки
+   * @private
+   */
+
+	}, {
+		key: "__hideLoader",
+		value: function __hideLoader() {
+			if (typeof BX != 'undefined') {
+				BX.showWait();
+			} else {
+				if (console && console.log) {
+					console.log("Для работы данного метода должна быть загружена и инициализирована библиотека CJSCore из 1C-Битрикс");
+				}
+			}
+		}
+	}]);
+
+	return loader;
+}(_module4.default);
+
+exports.default = loader;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _module3 = __webpack_require__(0);
+
+var _module4 = _interopRequireDefault(_module3);
+
+var _imagesHandler = __webpack_require__(2);
+
+var _imagesHandler2 = _interopRequireDefault(_imagesHandler);
+
+var _mediaHandler = __webpack_require__(3);
+
+var _mediaHandler2 = _interopRequireDefault(_mediaHandler);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author Anton Desin <anton.desin@gmail.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @link http://pirogov.ru/ Бюро Пирогова
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Date: 06.06.2017
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Time: 17:01
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+var preloader = function (_module) {
+	_inherits(preloader, _module);
+
+	function preloader() {
+		_classCallCheck(this, preloader);
+
+		var _this2 = _possibleConstructorReturn(this, (preloader.__proto__ || Object.getPrototypeOf(preloader)).call(this));
+
+		_this2.__registerEvents(['progress']);
+		_this2.params = {
+			handlers: [], //  Дополнительные обработчики
+			methods: { //  Методы для работы с представлениям, для переопределения
+				show: _this2.__showPreloader,
+				update: _this2.__updatePreloader,
+				hide: _this2.__hidePreloader
+			},
+			media: true, //  Обрабатывать HTML5 Media (<audio>  и <video>)
+			delay: 400, //  Время ожидания перед скрытием прелодера
+			timeout: 10000 //  Максимальное время загрузки (на случай зависания)
+		};
+		_this2.__handlers = [];
+		_this2.__total = 0;
+		_this2.__loaded = 0;
+		_this2.__$preloader = null;
+		return _this2;
+	}
+
+	_createClass(preloader, [{
+		key: "initialize",
+		value: function initialize() {
+			var _this3 = this;
+
+			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+			var _this = this,
+			    _ready = false;
+			this.params = Object.assign({}, this.params, params);
+			this.params.methods.show();
+
+			//  Обработчики по-умолчанию
+			this.addHandler('images', _imagesHandler2.default);
+			if (this.params.media === true) {
+				this.addHandler('media', _mediaHandler2.default);
+			}
+
+			//  Пользовательские обработчики
+			if (this.params.handlers.length) {
+				for (var i in this.params.handlers) {
+					var handler = this.params.handlers[i];
+					if (typeof handler.params == 'undefined') handler.params = {};
+					this.addHandler(handler.name, handler.class, handler.params);
+				}
+			}
+			this.__load();
+			setTimeout(function () {
+				if (_ready === false) {
+					_this.__forceFinish();
+					_ready = true;
+				}
+			}, this.params.timeout //  На случай если загрузка длится дольше, чем указано в настройках
+			);this.on('progress', function (status) {
+				_this3.params.methods.update(status);
+				if (status.loaded == status.total) {
+					setTimeout(function () {
+						if (_ready === false) {
+							_this.trigger('ready');
+							_ready = true;
+						}
+					}, _this.params.delay);
+				}
+			});
+			this.on('ready', function () {
+				_this3.params.methods.hide();
+			});
+		}
+	}, {
+		key: "addHandler",
+		value: function addHandler(name, handlerClass) {
+			var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+			this.__handlers.push({
+				name: name,
+				class: handlerClass,
+				params: params
+			});
+		}
+	}, {
+		key: "__showPreloader",
+		value: function __showPreloader() {
+			$('body').addClass('boreas-preloader-opened');
+			this.__$preloader = $('.boreas-preloader');
+			if (!this.__$preloader.length) {
+				this.__$preloader = $("<div class=\"boreas-preloader\">\n\t\t\t\t<div class=\"progress\">\n\t\t\t\t\t<div class=\"progress-bar\" role=\"progressbar\" style=\"width: 0%\"></div>\n\t\t\t\t</div>\n\t\t\t</div>");
+				$('body').append(this.__$preloader);
+			}
+		}
+	}, {
+		key: "__updatePreloader",
+		value: function __updatePreloader() {
+			var status = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.__getStatus();
+
+			var percent = parseInt(100 / status.total * status.loaded);
+			this.__$preloader.find('.progress-bar').css({ width: percent + '%' }).attr('aria-valuenow', percent
+			//.text(percent+'%');
+			);
+		}
+	}, {
+		key: "__hidePreloader",
+		value: function __hidePreloader() {
+			$('body').removeClass('boreas-preloader-opened');
+			this.__$preloader.fadeOut();
+		}
+	}, {
+		key: "__forceFinish",
+		value: function __forceFinish() {
+			var status = this.__updateStatus();
+			status.loaded = status.total;
+			this.params.methods.update(status);
+			this.trigger('ready');
+		}
+	}, {
+		key: "__load",
+		value: function __load() {
+			var _this = this;
+
+			for (var i in this.__handlers) {
+				this.__handlers[i].instance = new this.__handlers[i].class();
+				this.__handlers[i].instance.on('progress', function (params) {
+					_this.__updateStatus(params);
+					_this.trigger('progress', _this.__updateStatus(params));
+				});
+
+				this.__handlers[i].instance.initialize(this.__handlers[i].params);
+			}
+		}
+	}, {
+		key: "__updateStatus",
+		value: function __updateStatus() {
+			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+			var status = {
+				total: 0,
+				loaded: 0,
+				src: typeof params.src != 'undefined' ? params.src : null,
+				desc: typeof params.desc != 'undefined' ? params.desc : null
+			};
+
+			for (var i in this.__handlers) {
+				var handlerStatus = this.__handlers[i].instance.getStatus();
+				status.total += handlerStatus.total;
+				status.loaded += handlerStatus.loaded;
+			}
+
+			return status;
+		}
+	}]);
+
+	return preloader;
+}(_module4.default);
+
+exports.default = preloader;
+
+/***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1115,7 +1115,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _module3 = __webpack_require__(1);
+var _module3 = __webpack_require__(0);
 
 var _module4 = _interopRequireDefault(_module3);
 
@@ -1375,7 +1375,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _base2 = __webpack_require__(2);
+var _base2 = __webpack_require__(4);
 
 var _base3 = _interopRequireDefault(_base2);
 
@@ -1501,11 +1501,11 @@ var _application = __webpack_require__(7);
 
 var _application2 = _interopRequireDefault(_application);
 
-var _module2 = __webpack_require__(1);
+var _module2 = __webpack_require__(0);
 
 var _module3 = _interopRequireDefault(_module2);
 
-var _handler = __webpack_require__(0);
+var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
@@ -1532,16 +1532,16 @@ exports.preloaderHandler = _handler2.default;
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./loader": 3,
-	"./loader.js": 3,
-	"./preloader": 4,
-	"./preloader.js": 4,
-	"./preloader/handler": 0,
-	"./preloader/handler.js": 0,
-	"./preloader/imagesHandler": 5,
-	"./preloader/imagesHandler.js": 5,
-	"./preloader/mediaHandler": 6,
-	"./preloader/mediaHandler.js": 6
+	"./loader": 5,
+	"./loader.js": 5,
+	"./preloader": 6,
+	"./preloader.js": 6,
+	"./preloader/handler": 1,
+	"./preloader/handler.js": 1,
+	"./preloader/imagesHandler": 2,
+	"./preloader/imagesHandler.js": 2,
+	"./preloader/mediaHandler": 3,
+	"./preloader/mediaHandler.js": 3
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));

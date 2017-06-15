@@ -135,8 +135,8 @@ export default class preloader extends module {
 		let status = {
 			total: 0,
 			loaded: 0,
-			src: (typeof params.src != 'undefined') ? status.src : null,
-			desc: (typeof params.desc != 'undefined') ? status.desc : null,
+			src: (typeof params.src != 'undefined') ? params.src : null,
+			desc: (typeof params.desc != 'undefined') ? params.desc : null,
 		}
 
 		for(let i in this.__handlers) {
