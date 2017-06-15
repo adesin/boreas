@@ -818,7 +818,6 @@ var preloader = function (_module) {
 			timeout: 10000 //  Максимальное время загрузки (на случай зависания)
 		};
 		_this2.__handlers = [];
-		_this2.__progress = {};
 		_this2.__total = 0;
 		_this2.__loaded = 0;
 		_this2.__$preloader = null;
@@ -841,9 +840,9 @@ var preloader = function (_module) {
 			this.addHandler('images', _imagesHandler2.default);
 
 			//  Пользовательские обработчики
-			if (params.handlers.length) {
-				for (var i in params.handlers) {
-					var handler = params.handlers[i];
+			if (this.params.handlers.length) {
+				for (var i in this.params.handlers) {
+					var handler = this.params.handlers[i];
 					if (typeof handler.params == 'undefined') handler.params = {};
 					this.addHandler(handler.name, handler.class, handler.params);
 				}
@@ -1016,10 +1015,7 @@ var application = function (_module) {
 		var _this2 = _possibleConstructorReturn(this, (application.__proto__ || Object.getPrototypeOf(application)).call(this));
 
 		_this2.params = Object.assign({}, defaults, params);
-		_this2.$container = $('html');
-
 		_this2.__includeModules(_this2.params.modules);
-
 		return _this2;
 	}
 
