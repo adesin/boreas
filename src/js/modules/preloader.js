@@ -75,6 +75,7 @@ export default class preloader extends module {
 			}
 		});
 		this.on('ready', () => {
+			window.scrollTo(0, 0);
 			this.params.methods.hide();
 		});
 	}

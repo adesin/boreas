@@ -1019,6 +1019,7 @@ var preloader = function (_module) {
 				}
 			});
 			this.on('ready', function () {
+				window.scrollTo(0, 0);
 				_this3.params.methods.hide();
 			});
 		}
