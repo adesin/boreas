@@ -13,7 +13,7 @@ module.exports = {
 		'boreas.min': './src/js/main',
 	},
 	output: {
-		filename: '[name].js',
+		filename: './dist/[name].js',
 		library: 'Boreas',
 	},
 	watch: true,
