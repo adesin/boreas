@@ -255,7 +255,7 @@ exports.default = _module;
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+	value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -290,39 +290,40 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  *
  */
 var handler = function (_module) {
-  _inherits(handler, _module);
+	_inherits(handler, _module);
 
-  function handler() {
-    _classCallCheck(this, handler);
+	function handler() {
+		_classCallCheck(this, handler);
 
-    var _this = _possibleConstructorReturn(this, (handler.__proto__ || Object.getPrototypeOf(handler)).call(this));
+		var _this = _possibleConstructorReturn(this, (handler.__proto__ || Object.getPrototypeOf(handler)).call(this));
 
-    _this.__registerEvents(['progress', 'start']);
-    return _this;
-  }
+		_this.__registerEvents(['progress', 'start']);
+		_this.params = {};
+		return _this;
+	}
 
-  _createClass(handler, [{
-    key: 'initialize',
-    value: function initialize() {
-      var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+	_createClass(handler, [{
+		key: 'initialize',
+		value: function initialize() {
+			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-      this.params = Object.assign({}, this.params, params);
+			$.extend(this.params, params);
 
-      this.trigger('progress', this.getStatus());
-      this.trigger('ready');
-    }
-  }, {
-    key: 'getStatus',
-    value: function getStatus() {
-      return {
-        total: 0,
-        loaded: 0,
-        src: null
-      };
-    }
-  }]);
+			this.trigger('progress', this.getStatus());
+			this.trigger('ready');
+		}
+	}, {
+		key: 'getStatus',
+		value: function getStatus() {
+			return {
+				total: 0,
+				loaded: 0,
+				src: null
+			};
+		}
+	}]);
 
-  return handler;
+	return handler;
 }(_module4.default);
 
 exports.default = handler;
@@ -391,7 +392,7 @@ var imagesHandler = function (_handler) {
 
 			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-			this.params = Object.assign({}, this.params, params);
+			$.extend(this.params, params);
 
 			//  Создаём ключи объекта в который будут помещаться найденные ресурсы
 			this.__found = {};
@@ -643,7 +644,7 @@ var mediaHandler = function (_handler) {
 			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
 			var scope = this;
-			this.params = Object.assign({}, this.params, params);
+			$.extend(this.params, params);
 
 			this.__loadMedia().done(function () {
 				scope.trigger('ready');
@@ -983,7 +984,8 @@ var preloader = function (_module) {
 
 			var _this = this,
 			    _ready = false;
-			this.params = Object.assign({}, this.params, params);
+			$.extend(this.params, params);
+
 			this.params.methods.show();
 
 			//  Обработчики по-умолчанию
@@ -1165,19 +1167,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * Time: 14:38
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
-var defaults = {
-	modules: [{
-		name: 'loader', // Имя модуля
-		load: true, // Загружать модуль. Возможные значения: true
-		async: true,
-		params: {
-			'param1': 'value1',
-			'param2': 'value2'
-		}
-	}],
-	modulesDataAttribute: 'boreas-modules'
-},
-    moduleDefaults = {
+var moduleDefaults = {
 	name: null,
 	load: 'auto',
 	async: true,
@@ -1197,7 +1187,20 @@ var application = function (_module) {
 
 		var _this2 = _possibleConstructorReturn(this, (application.__proto__ || Object.getPrototypeOf(application)).call(this));
 
-		_this2.params = Object.assign({}, defaults, params);
+		_this2.params = {
+			modules: [{
+				name: 'loader', // Имя модуля
+				load: true, // Загружать модуль. Возможные значения: true
+				async: true,
+				params: {
+					'param1': 'value1',
+					'param2': 'value2'
+				}
+			}],
+			modulesDataAttribute: 'boreas-modules'
+		};
+		$.extend(_this2.params, params);
+
 		_this2.__includeModules(_this2.params.modules);
 		return _this2;
 	}
@@ -1210,9 +1213,8 @@ var application = function (_module) {
 
 	_createClass(application, [{
 		key: 'initialize',
-		value: function initialize() /*params = {}*/{
+		value: function initialize() {
 			var _this = this;
-			//params = Object.assign({}, defaults, params);
 
 			this.__loadModules(this.params.modules, function () {
 				_this.trigger('ready');
@@ -1220,8 +1222,9 @@ var application = function (_module) {
 		}
 	}, {
 		key: 'registerModule',
-		value: function registerModule(module) {
-			module = Object.assign({}, moduleDefaults, module);
+		value: function registerModule(params) {
+			var module = moduleDefaults;
+			$.extend(module, params);
 
 			this.params.modules.push(module);
 		}
@@ -1236,7 +1239,7 @@ var application = function (_module) {
 				if (typeof moduleItem == 'string') {
 					moduleItem = { name: moduleItem };
 				}
-				moduleItem = Object.assign({}, moduleDefaults, moduleItem);
+				moduleItem = $.extend({}, moduleDefaults, moduleItem);
 				if (typeof moduleItem.class != 'undefined') {
 					_this3[moduleItem.name] = new moduleItem.class();
 				} else {
@@ -1272,7 +1275,7 @@ var application = function (_module) {
 				if (typeof moduleItem == 'string') {
 					moduleItem = { name: moduleItem };
 				}
-				moduleItem = Object.assign({}, moduleDefaults, moduleItem);
+				moduleItem = $.extend({}, moduleDefaults, moduleItem);
 				if (async !== moduleItem.async) return; //  Отсеиваем модули с другим типом загрузки
 				if (!_this.__isModuleEnabled(moduleItem)) return; //  Отсеиваем отключённые модули
 

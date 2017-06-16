@@ -30,7 +30,7 @@ export default class imagesHandler extends handler {
 	}
 
 	initialize (params = {}) {
-		this.params = Object.assign({}, this.params, params);
+		$.extend( this.params, params );
 
 		//  Создаём ключи объекта в который будут помещаться найденные ресурсы
 		this.__found = {};

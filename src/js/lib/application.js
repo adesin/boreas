@@ -7,25 +7,7 @@
 
 import module from "./module";
 
-let defaults = {
-		modules: [
-			{
-				name: 'loader', // Имя модуля
-				load: true,     // Загружать модуль. Возможные значения: true
-				async: true,
-				params: {
-					'param1': 'value1',
-					'param2': 'value2',
-				}
-			},
-			/*
-			* Или так:
-			'loader',
-			*/
-		],
-		modulesDataAttribute: 'boreas-modules',
-	},
-	moduleDefaults = {
+let moduleDefaults = {
 		name: null,
 		load: 'auto',
 		async: true,
@@ -39,7 +21,26 @@ export default class application extends module {
 	 */
 	constructor(params = {}){
 		super();
-		this.params = Object.assign({}, defaults, params);
+		this.params = {
+			modules: [
+				{
+					name: 'loader', // Имя модуля
+					load: true,     // Загружать модуль. Возможные значения: true
+					async: true,
+					params: {
+						'param1': 'value1',
+						'param2': 'value2',
+					}
+				},
+				/*
+				 * Или так:
+				 'loader',
+				 */
+			],
+			modulesDataAttribute: 'boreas-modules',
+		};
+		$.extend( this.params, params );
+
 		this.__includeModules(this.params.modules);
 	}
 
@@ -47,17 +48,17 @@ export default class application extends module {
 	 * Инициализация приложения
 	 * @param params Объект, содержащий параметры инициализации
 	 */
-	initialize (/*params = {}*/) {
+	initialize () {
 		let _this = this;
-		//params = Object.assign({}, defaults, params);
 
 		this.__loadModules(this.params.modules, () => {
 			_this.trigger('ready');
 		})
 	}
 
-	registerModule (module) {
-		module = Object.assign({}, moduleDefaults, module);
+	registerModule (params) {
+		let module = moduleDefaults;
+		$.extend( module, params );
 
 		this.params.modules.push(module);
 	}
@@ -69,7 +70,7 @@ export default class application extends module {
 			if(typeof moduleItem == 'string'){
 				moduleItem = { name: moduleItem };
 			}
-			moduleItem = Object.assign({}, moduleDefaults, moduleItem);
+			moduleItem = $.extend({}, moduleDefaults, moduleItem);
 			if(typeof moduleItem.class != 'undefined'){
 				this[moduleItem.name] = new moduleItem.class();
 			}else{
@@ -97,7 +98,7 @@ export default class application extends module {
 			if(typeof moduleItem == 'string'){
 				moduleItem = { name: moduleItem };
 			}
-			moduleItem = Object.assign({}, moduleDefaults, moduleItem);
+			moduleItem = $.extend({}, moduleDefaults, moduleItem);
 			if(async !== moduleItem.async) return;  //  Отсеиваем модули с другим типом загрузки
 			if(!_this.__isModuleEnabled(moduleItem)) return; //  Отсеиваем отключённые модули
 

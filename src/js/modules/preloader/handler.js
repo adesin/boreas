@@ -23,10 +23,11 @@ export default class handler extends module {
 	constructor () {
 		super();
 		this.__registerEvents(['progress', 'start']);
+		this.params = {};
 	}
 
 	initialize (params={}) {
-		this.params = Object.assign({}, this.params, params);
+		$.extend( this.params, params );
 
 		this.trigger('progress', this.getStatus());
 		this.trigger('ready');
