@@ -19,17 +19,22 @@ export default class preloader extends module {
 			handlers: [],   //  Дополнительные обработчики
 			methods: {      //  Методы для работы с представлениям, для переопределения
 				show: this.__showPreloader,
-				update: this.__updatePreloader,
+				update: this.__updatePercent,
 				hide: this.__hidePreloader,
 			},
 			media: true,    //  Обрабатывать HTML5 Media (<audio>  и <video>)
-			delay: 400,     //  Время ожидания перед скрытием прелодера
+			delay: 200,     //  Время ожидания перед скрытием прелодера
 			timeout: 10000, //  Максимальное время загрузки (на случай зависания)
 		};
 		this.__handlers = [];
-		this.__total = 0;
-		this.__loaded = 0;
+		this.__status = {
+			total: 0,
+			loaded: 0,
+			src: null,
+			desc: null,
+		}
 		this.__$preloader = null;
+		this.__watcherTt = null;
 	}
 
 	initialize (params={}) {
@@ -53,6 +58,7 @@ export default class preloader extends module {
 			}
 		}
 		this.__load();
+		this.__animationWatcher();
 
 		if(this.params.timeout > 0){
 			setTimeout(()=>{
@@ -64,7 +70,6 @@ export default class preloader extends module {
 		}
 
 		this.on('progress', (status) => {
-			this.params.methods.update(status);
 			if(status.loaded == status.total){
 				setTimeout(function(){
 					if(_ready === false){
@@ -77,6 +82,7 @@ export default class preloader extends module {
 		this.on('ready', () => {
 			window.scrollTo(0, 0);
 			this.params.methods.hide();
+			this.__animationWatcher(false);
 		});
 	}
 
@@ -88,6 +94,23 @@ export default class preloader extends module {
 		});
 	}
 
+
+	__animationWatcher (start=true){
+		let scope = this,
+			value = 0;
+
+		if(start === false){
+			clearInterval(this.__watcherTt);
+			scope.__watcherTt = null;
+		}else if(start === true && scope.__watcherTt === null){
+			scope.__watcherTt = setInterval(() => {
+				if(scope.__status.loaded > value){
+					scope.params.methods.update(scope.__status);
+				}
+			}, scope.params.delay);
+		}
+
+	}
 
 	__showPreloader (){
 		$('body').addClass('boreas-preloader-opened');
@@ -101,7 +124,7 @@ export default class preloader extends module {
 			$('body').append(this.__$preloader);
 		}
 	}
-	__updatePreloader (status=null) {
+	__updatePercent (status=null) {
 		if(!status) status = this.__getStatus();
 
 		let percent = parseInt(100 / status.total * status.loaded);
@@ -119,11 +142,10 @@ export default class preloader extends module {
 	}
 
 	__forceFinish (){
-		let status = this.__updateStatus();
+		let status = this.__status;
 		status.loaded = status.total;
 		this.params.methods.update(status);
 		this.trigger('ready');
-
 	}
 
 	__load () {
@@ -133,7 +155,7 @@ export default class preloader extends module {
 			this.__handlers[i].instance = new this.__handlers[i].class();
 			this.__handlers[i].instance.on('progress', (params) => {
 				_this.__updateStatus(params)
-				_this.trigger('progress', _this.__updateStatus(params));
+				_this.trigger('progress', _this.__status);
 			});
 
 			this.__handlers[i].instance.initialize(this.__handlers[i].params);
@@ -141,19 +163,15 @@ export default class preloader extends module {
 	}
 
 	__updateStatus (params={}){
-		let status = {
-			total: 0,
-			loaded: 0,
-			src: (typeof params.src != 'undefined') ? params.src : null,
-			desc: (typeof params.desc != 'undefined') ? params.desc : null,
-		}
+		this.__status.total = 0;
+		this.__status.loaded = 0;
+		this.__status.src = (typeof params.src != 'undefined') ? params.src : null;
+		this.__status.desc = (typeof params.desc != 'undefined') ? params.desc : null;
 
 		for(let i in this.__handlers) {
 			let handlerStatus = this.__handlers[i].instance.getStatus();
-			status.total += handlerStatus.total;
-			status.loaded += handlerStatus.loaded;
+			this.__status.total += handlerStatus.total;
+			this.__status.loaded += handlerStatus.loaded;
 		}
-
-		return status;
 	}
 }

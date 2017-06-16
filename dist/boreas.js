@@ -955,17 +955,22 @@ var preloader = function (_module) {
 			handlers: [], //  Дополнительные обработчики
 			methods: { //  Методы для работы с представлениям, для переопределения
 				show: _this2.__showPreloader,
-				update: _this2.__updatePreloader,
+				update: _this2.__updatePercent,
 				hide: _this2.__hidePreloader
 			},
 			media: true, //  Обрабатывать HTML5 Media (<audio>  и <video>)
-			delay: 400, //  Время ожидания перед скрытием прелодера
+			delay: 200, //  Время ожидания перед скрытием прелодера
 			timeout: 10000 //  Максимальное время загрузки (на случай зависания)
 		};
 		_this2.__handlers = [];
-		_this2.__total = 0;
-		_this2.__loaded = 0;
+		_this2.__status = {
+			total: 0,
+			loaded: 0,
+			src: null,
+			desc: null
+		};
 		_this2.__$preloader = null;
+		_this2.__watcherTt = null;
 		return _this2;
 	}
 
@@ -996,6 +1001,7 @@ var preloader = function (_module) {
 				}
 			}
 			this.__load();
+			this.__animationWatcher();
 
 			if (this.params.timeout > 0) {
 				setTimeout(function () {
@@ -1008,7 +1014,6 @@ var preloader = function (_module) {
 			}
 
 			this.on('progress', function (status) {
-				_this3.params.methods.update(status);
 				if (status.loaded == status.total) {
 					setTimeout(function () {
 						if (_ready === false) {
@@ -1021,6 +1026,7 @@ var preloader = function (_module) {
 			this.on('ready', function () {
 				window.scrollTo(0, 0);
 				_this3.params.methods.hide();
+				_this3.__animationWatcher(false);
 			});
 		}
 	}, {
@@ -1035,6 +1041,25 @@ var preloader = function (_module) {
 			});
 		}
 	}, {
+		key: "__animationWatcher",
+		value: function __animationWatcher() {
+			var start = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+			var scope = this,
+			    value = 0;
+
+			if (start === false) {
+				clearInterval(this.__watcherTt);
+				scope.__watcherTt = null;
+			} else if (start === true && scope.__watcherTt === null) {
+				scope.__watcherTt = setInterval(function () {
+					if (scope.__status.loaded > value) {
+						scope.params.methods.update(scope.__status);
+					}
+				}, scope.params.delay);
+			}
+		}
+	}, {
 		key: "__showPreloader",
 		value: function __showPreloader() {
 			$('body').addClass('boreas-preloader-opened');
@@ -1045,8 +1070,8 @@ var preloader = function (_module) {
 			}
 		}
 	}, {
-		key: "__updatePreloader",
-		value: function __updatePreloader() {
+		key: "__updatePercent",
+		value: function __updatePercent() {
 			var status = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
 			if (!status) status = this.__getStatus();
@@ -1067,7 +1092,7 @@ var preloader = function (_module) {
 	}, {
 		key: "__forceFinish",
 		value: function __forceFinish() {
-			var status = this.__updateStatus();
+			var status = this.__status;
 			status.loaded = status.total;
 			this.params.methods.update(status);
 			this.trigger('ready');
@@ -1081,7 +1106,7 @@ var preloader = function (_module) {
 				this.__handlers[i].instance = new this.__handlers[i].class();
 				this.__handlers[i].instance.on('progress', function (params) {
 					_this.__updateStatus(params);
-					_this.trigger('progress', _this.__updateStatus(params));
+					_this.trigger('progress', _this.__status);
 				});
 
 				this.__handlers[i].instance.initialize(this.__handlers[i].params);
@@ -1092,20 +1117,16 @@ var preloader = function (_module) {
 		value: function __updateStatus() {
 			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-			var status = {
-				total: 0,
-				loaded: 0,
-				src: typeof params.src != 'undefined' ? params.src : null,
-				desc: typeof params.desc != 'undefined' ? params.desc : null
-			};
+			this.__status.total = 0;
+			this.__status.loaded = 0;
+			this.__status.src = typeof params.src != 'undefined' ? params.src : null;
+			this.__status.desc = typeof params.desc != 'undefined' ? params.desc : null;
 
 			for (var i in this.__handlers) {
 				var handlerStatus = this.__handlers[i].instance.getStatus();
-				status.total += handlerStatus.total;
-				status.loaded += handlerStatus.loaded;
+				this.__status.total += handlerStatus.total;
+				this.__status.loaded += handlerStatus.loaded;
 			}
-
-			return status;
 		}
 	}]);
 
