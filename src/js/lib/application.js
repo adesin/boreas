@@ -39,7 +39,7 @@ export default class application extends module {
 			],
 			modulesDataAttribute: 'boreas-modules',
 		};
-		$.extend( this.params, params );
+		this.params = $.extend( true, this.params, params );
 
 		this.__includeModules(this.params.modules);
 	}
@@ -56,10 +56,8 @@ export default class application extends module {
 		})
 	}
 
-	registerModule (params) {
-		let module = moduleDefaults;
-		$.extend( module, params );
-
+	registerModule (module) {
+		module = $.extend( true, moduleDefaults, module );
 		this.params.modules.push(module);
 	}
 
@@ -70,7 +68,7 @@ export default class application extends module {
 			if(typeof moduleItem == 'string'){
 				moduleItem = { name: moduleItem };
 			}
-			moduleItem = $.extend({}, moduleDefaults, moduleItem);
+			moduleItem = $.extend( true, moduleDefaults, moduleItem );
 			if(typeof moduleItem.class != 'undefined'){
 				this[moduleItem.name] = new moduleItem.class();
 			}else{
@@ -98,7 +96,7 @@ export default class application extends module {
 			if(typeof moduleItem == 'string'){
 				moduleItem = { name: moduleItem };
 			}
-			moduleItem = $.extend({}, moduleDefaults, moduleItem);
+			moduleItem = $.extend( true, moduleDefaults, moduleItem );
 			if(async !== moduleItem.async) return;  //  Отсеиваем модули с другим типом загрузки
 			if(!_this.__isModuleEnabled(moduleItem)) return; //  Отсеиваем отключённые модули
 

@@ -40,7 +40,9 @@ export default class preloader extends module {
 	initialize (params={}) {
 		let _this = this,
 			_ready = false;
-		$.extend( this.params, params );
+		this.params = $.extend( true, this.params, params );
+
+		this.log(this.params);
 
 		this.params.methods.show();
 

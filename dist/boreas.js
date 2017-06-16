@@ -307,7 +307,7 @@ var handler = function (_module) {
 		value: function initialize() {
 			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-			$.extend(this.params, params);
+			this.params = $.extend(true, this.params, params);
 
 			this.trigger('progress', this.getStatus());
 			this.trigger('ready');
@@ -392,7 +392,7 @@ var imagesHandler = function (_handler) {
 
 			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-			$.extend(this.params, params);
+			this.params = $.extend(true, this.params, params);
 
 			//  Создаём ключи объекта в который будут помещаться найденные ресурсы
 			this.__found = {};
@@ -644,7 +644,7 @@ var mediaHandler = function (_handler) {
 			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
 			var scope = this;
-			$.extend(this.params, params);
+			this.params = $.extend(true, this.params, params);
 
 			this.__loadMedia().done(function () {
 				scope.trigger('ready');
@@ -984,7 +984,9 @@ var preloader = function (_module) {
 
 			var _this = this,
 			    _ready = false;
-			$.extend(this.params, params);
+			this.params = $.extend(true, this.params, params);
+
+			this.log(this.params);
 
 			this.params.methods.show();
 
@@ -1199,7 +1201,7 @@ var application = function (_module) {
 			}],
 			modulesDataAttribute: 'boreas-modules'
 		};
-		$.extend(_this2.params, params);
+		_this2.params = $.extend(true, _this2.params, params);
 
 		_this2.__includeModules(_this2.params.modules);
 		return _this2;
@@ -1222,10 +1224,8 @@ var application = function (_module) {
 		}
 	}, {
 		key: 'registerModule',
-		value: function registerModule(params) {
-			var module = moduleDefaults;
-			$.extend(module, params);
-
+		value: function registerModule(module) {
+			module = $.extend(true, moduleDefaults, module);
 			this.params.modules.push(module);
 		}
 	}, {
@@ -1239,7 +1239,7 @@ var application = function (_module) {
 				if (typeof moduleItem == 'string') {
 					moduleItem = { name: moduleItem };
 				}
-				moduleItem = $.extend({}, moduleDefaults, moduleItem);
+				moduleItem = $.extend(true, moduleDefaults, moduleItem);
 				if (typeof moduleItem.class != 'undefined') {
 					_this3[moduleItem.name] = new moduleItem.class();
 				} else {
@@ -1275,7 +1275,7 @@ var application = function (_module) {
 				if (typeof moduleItem == 'string') {
 					moduleItem = { name: moduleItem };
 				}
-				moduleItem = $.extend({}, moduleDefaults, moduleItem);
+				moduleItem = $.extend(true, moduleDefaults, moduleItem);
 				if (async !== moduleItem.async) return; //  Отсеиваем модули с другим типом загрузки
 				if (!_this.__isModuleEnabled(moduleItem)) return; //  Отсеиваем отключённые модули
 

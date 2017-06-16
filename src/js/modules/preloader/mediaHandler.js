@@ -20,7 +20,7 @@ export default class mediaHandler extends handler {
 
 	initialize (params = {}) {
 		let scope = this;
-		$.extend( this.params, params );
+		this.params = $.extend( true, this.params, params );
 
 		this.__loadMedia().done(() => {
 			scope.trigger('ready');
