@@ -20,11 +20,12 @@ export default class preloader extends module {
 			handlers: [],   //  Дополнительные обработчики
 			methods: {      //  Методы для работы с представлениям, для переопределения
 				show: this.__showPreloader,
-				update: this.__updatePercent,
+				update: this.__updateBar,
 				hide: this.__hidePreloader,
 			},
 			media: true,    //  Обрабатывать HTML5 Media (<audio>  и <video>)
-			delay: 400,     //  Время ожидания перед скрытием прелодера
+			hideDelay: 1500,     //  Время ожидания перед скрытием прелодера
+			animationDelay: 400,     //  Время ожидания перед скрытием прелодера
 			timeout: 30000, //  Максимальное время загрузки (на случай зависания)
 		};
 		scope.__handlers = [];
@@ -80,7 +81,7 @@ export default class preloader extends module {
 						scope.trigger('ready');
 						scope.__ready = true;
 					}
-				}, 1500);
+				}, scope.params.hideDelay);
 			}
 		});
 		scope.on('ready', () => {
@@ -113,7 +114,7 @@ export default class preloader extends module {
 					scope.params.methods.update(scope.__status);
 					value = scope.__status.loaded;
 				}
-			}, scope.params.delay);
+			}, scope.params.animationDelay);
 		}
 	}
 
@@ -129,7 +130,7 @@ export default class preloader extends module {
 			$('body').append(this.__$preloader);
 		}
 	}
-	__updatePercent (status=null) {
+	__updateBar (status=null) {
 		//if(!status) status = this.__getStatus();
 
 		let percent = parseInt(100 / status.total * status.loaded);

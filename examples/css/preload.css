@@ -40,10 +40,10 @@ body.boreas-preloader-opened {
 }
 
 .boreas-preloader .progress-bar {
-	-webkit-transition: all .4s linear;
-	-moz-transition: all .4s linear;
-	-o-transition: all .4s linear;
-	transition: all .4s linear;
+	-webkit-transition: all 1.5s linear;
+	-moz-transition: all 1.5s linear;
+	-o-transition: all 1.5s linear;
+	transition: all 1.5s linear;
 	background-color:#009cf6;
 }
 

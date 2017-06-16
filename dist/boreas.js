@@ -958,11 +958,12 @@ var preloader = function (_module) {
 			handlers: [], //  Дополнительные обработчики
 			methods: { //  Методы для работы с представлениям, для переопределения
 				show: _this2.__showPreloader,
-				update: _this2.__updatePercent,
+				update: _this2.__updateBar,
 				hide: _this2.__hidePreloader
 			},
 			media: true, //  Обрабатывать HTML5 Media (<audio>  и <video>)
-			delay: 400, //  Время ожидания перед скрытием прелодера
+			hideDelay: 1500, //  Время ожидания перед скрытием прелодера
+			animationDelay: 400, //  Время ожидания перед скрытием прелодера
 			timeout: 30000 //  Максимальное время загрузки (на случай зависания)
 		};
 		scope.__handlers = [];
@@ -1024,7 +1025,7 @@ var preloader = function (_module) {
 							scope.trigger('ready');
 							scope.__ready = true;
 						}
-					}, 1500);
+					}, scope.params.hideDelay);
 				}
 			});
 			scope.on('ready', function () {
@@ -1063,7 +1064,7 @@ var preloader = function (_module) {
 						scope.params.methods.update(scope.__status);
 						value = scope.__status.loaded;
 					}
-				}, scope.params.delay);
+				}, scope.params.animationDelay);
 			}
 		}
 	}, {
@@ -1077,8 +1078,8 @@ var preloader = function (_module) {
 			}
 		}
 	}, {
-		key: "__updatePercent",
-		value: function __updatePercent() {
+		key: "__updateBar",
+		value: function __updateBar() {
 			var status = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
 			//if(!status) status = this.__getStatus();
