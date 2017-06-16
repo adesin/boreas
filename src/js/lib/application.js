@@ -27,10 +27,10 @@ export default class application extends module {
 					name: 'loader', // Имя модуля
 					load: true,     // Загружать модуль. Возможные значения: true
 					async: true,
-					params: {
+					params: {/*
 						'param1': 'value1',
 						'param2': 'value2',
-					}
+					*/}
 				},
 				/*
 				 * Или так:
@@ -40,6 +40,8 @@ export default class application extends module {
 			modulesDataAttribute: 'boreas-modules',
 		};
 		this.params = $.extend( true, this.params, params );
+
+		this.log(this.params);
 
 		this.__includeModules(this.params.modules);
 	}

@@ -297,7 +297,7 @@ var handler = function (_module) {
 
 		var _this = _possibleConstructorReturn(this, (handler.__proto__ || Object.getPrototypeOf(handler)).call(this));
 
-		_this.__registerEvents(['progress', 'start']);
+		_this.__registerEvents(['progress']);
 		_this.params = {};
 		return _this;
 	}
@@ -1194,14 +1194,16 @@ var application = function (_module) {
 				name: 'loader', // Имя модуля
 				load: true, // Загружать модуль. Возможные значения: true
 				async: true,
-				params: {
-					'param1': 'value1',
-					'param2': 'value2'
-				}
+				params: {/*
+             'param1': 'value1',
+             'param2': 'value2',
+             */}
 			}],
 			modulesDataAttribute: 'boreas-modules'
 		};
 		_this2.params = $.extend(true, _this2.params, params);
+
+		_this2.log(_this2.params);
 
 		_this2.__includeModules(_this2.params.modules);
 		return _this2;

@@ -22,7 +22,7 @@ import module from "../../lib/module";
 export default class handler extends module {
 	constructor () {
 		super();
-		this.__registerEvents(['progress', 'start']);
+		this.__registerEvents(['progress']);
 		this.params = {};
 	}
 
