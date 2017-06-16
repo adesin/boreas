@@ -39,10 +39,7 @@ export default class application extends module {
 			],
 			modulesDataAttribute: 'boreas-modules',
 		};
-		this.params = $.extend( true, this.params, params );
-
-		this.log(this.params);
-
+		$.extend( true, this.params, params );
 		this.__includeModules(this.params.modules);
 	}
 
@@ -59,18 +56,21 @@ export default class application extends module {
 	}
 
 	registerModule (module) {
-		module = $.extend( true, moduleDefaults, module );
+		let __defaults = moduleDefaults;
+		module = $.extend( true, __defaults, module );
 		this.params.modules.push(module);
 	}
 
 	__includeModules (modules){
 		for(let i in modules){
-			let moduleItem = modules[i];
+			let moduleItem = modules[i],
+				__defaults = moduleDefaults;
 
 			if(typeof moduleItem == 'string'){
 				moduleItem = { name: moduleItem };
 			}
-			moduleItem = $.extend( true, moduleDefaults, moduleItem );
+			moduleItem = $.extend( true, __defaults, moduleItem );
+
 			if(typeof moduleItem.class != 'undefined'){
 				this[moduleItem.name] = new moduleItem.class();
 			}else{
@@ -94,11 +94,15 @@ export default class application extends module {
 		let _this = this,
 			promise = (async===false)?null:[];
 
-		modules.forEach((moduleItem, k) => {
+		for(let i in modules){
+			let moduleItem = modules[i],
+				__defaults = moduleDefaults;
+
+
 			if(typeof moduleItem == 'string'){
 				moduleItem = { name: moduleItem };
 			}
-			moduleItem = $.extend( true, moduleDefaults, moduleItem );
+			moduleItem = $.extend( true, __defaults, moduleItem );
 			if(async !== moduleItem.async) return;  //  Отсеиваем модули с другим типом загрузки
 			if(!_this.__isModuleEnabled(moduleItem)) return; //  Отсеиваем отключённые модули
 
@@ -113,7 +117,7 @@ export default class application extends module {
 			}else{//  Асинхронная загрузка модулей
 				promise.push(_this.__loadModule(moduleItem, true));
 			}
-		});
+		}
 
 		if(async===false) {  //  Загружаем оставшиеся модули синхронно
 			if(promise === null){  //   Если синхронных не нашлось, то грузим всё асинхронно

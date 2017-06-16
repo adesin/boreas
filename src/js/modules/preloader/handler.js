@@ -27,7 +27,7 @@ export default class handler extends module {
 	}
 
 	initialize (params={}) {
-		this.params = $.extend( true, this.params, params );
+		$.extend( true, this.params, params );
 
 		this.trigger('progress', this.getStatus());
 		this.trigger('ready');

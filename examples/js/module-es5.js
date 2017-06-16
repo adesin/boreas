@@ -56,7 +56,7 @@
 	 * @param params Параметры инициализации
 	 */
 	customModule.prototype.initialize = function (params) {
-		this.params = $.extend( true, this.params, params );
+		$.extend( true, this.params, params );
 
 		/**
 		 *  Обязательно нужно выполнить встровенное событие "ready", чтоб сообщить приложению об окончании инициализации модуля.

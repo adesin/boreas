@@ -42,7 +42,7 @@ class customModule2 extends Boreas.module {
 	 * @param params Параметры инициализации
 	 */
 	initialize (params = {}) {
-		this.params = $.extend( true, this.params, params );
+		$.extend( true, this.params, params );
 
 		/**
 		 *  Обязательно нужно выполнить встровенное событие "ready", чтоб сообщить приложению об окончании инициализации модуля.

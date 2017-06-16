@@ -7,7 +7,13 @@ $(function() {
 			{
 				name: 'customModule',   //  Имя модуля
 				load: 'auto',           //  Способ загрузки. Модуль загрузится только на тех страницах, где задан параметр data-boreas-modules
-				class: customModule     //  Класс модуля, унаследованный от Boreas.module
+				class: customModule,     //  Класс модуля, унаследованный от Boreas.module
+				async: false,
+			},
+			{
+				name: 'preloader',
+				load: 'auto',
+				async: false,
 			},
 			{
 				name: 'customModule2',
