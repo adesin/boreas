@@ -35,7 +35,6 @@ export default class preloader extends module {
 			desc: null,
 		}
 		scope.__$preloader = null;
-		scope.__queue = [];
 		scope.__watcherTt = null;
 		scope.__ready = false;
 	}
@@ -61,7 +60,7 @@ export default class preloader extends module {
 			}
 		}
 		scope.__load();
-		//scope.__animationWatcher();
+		scope.__animationWatcher();
 
 		if(scope.params.timeout > 0){
 			setTimeout(()=>{
@@ -73,14 +72,12 @@ export default class preloader extends module {
 		}
 
 		scope.on('progress', (status) => {
-			scope.params.methods.update(status);
+			//scope.params.methods.update(status);
 
 			if(status.loaded == status.total){
 				setTimeout(function(){
 					if(scope.__ready === false){
-						if(!scope.__queue.length){
-							scope.trigger('ready');
-						}
+						scope.trigger('ready');
 						scope.__ready = true;
 					}
 				}, scope.params.delay);
@@ -89,7 +86,7 @@ export default class preloader extends module {
 		scope.on('ready', () => {
 			window.scrollTo(0, 0);
 			scope.params.methods.hide();
-			//scope.__animationWatcher(false);
+			scope.__animationWatcher(false);
 		});
 	}
 
@@ -102,28 +99,22 @@ export default class preloader extends module {
 	}
 
 	__animationWatcher (start=true){
-		let scope = this;
+		let scope = this,
+			value = 0;
 
 		if(start === false){
 			clearInterval(this.__watcherTt);
 			scope.__watcherTt = null;
 		}else if(start === true && scope.__watcherTt === null){
 			scope.__watcherTt = setInterval(() => {
-				if(scope.__queue.length){
-					let status = scope.__queue.shift();
+				scope.log(scope.__status);
 
-					scope.log('show: ' + status.loaded + '/' + status.total);
-					//scope.log('left:');
-					//scope.log(JSON.stringify(scope.__queue));
-
-					scope.params.methods.update(status);
-				}else if(scope.__ready === true){
-					scope.trigger('ready');
-					//scope.__animationWatcher(false);
+				if(value < scope.__status.loaded){
+					scope.params.methods.update(scope.__status);
+					value = scope.__status.loaded;
 				}
-			}, scope.__delay / scope.__total);
+			}, scope.params.delay);
 		}
-
 	}
 
 	__showPreloader (){
