@@ -1018,7 +1018,14 @@ var preloader = function (_module) {
 			scope.on('progress', function (status) {
 				//scope.params.methods.update(status);
 
-
+				if (status.loaded == status.total) {
+					setTimeout(function () {
+						if (scope.__ready === false) {
+							scope.trigger('ready');
+							scope.__ready = true;
+						}
+					}, 1500);
+				}
 			});
 			scope.on('ready', function () {
 				window.scrollTo(0, 0);
@@ -1050,18 +1057,11 @@ var preloader = function (_module) {
 				scope.__watcherTt = null;
 			} else if (start === true && scope.__watcherTt === null) {
 				scope.__watcherTt = setInterval(function () {
-					scope.log(scope.__status);
+					//scope.log(scope.__status);
 
 					if (value < scope.__status.loaded) {
 						scope.params.methods.update(scope.__status);
 						value = scope.__status.loaded;
-					} else if (scope.__status.loaded == scope.__status.total) {
-						setTimeout(function () {
-							if (scope.__ready === false) {
-								scope.trigger('ready');
-								scope.__ready = true;
-							}
-						}, scope.params.delay);
 					}
 				}, scope.params.delay);
 			}
