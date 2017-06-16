@@ -64,8 +64,8 @@ export default class application extends module {
 	}
 
 	__includeModules (modules){
-		modules.forEach((moduleItem, k) => {
-			let moduleClass;
+		for(let i in modules){
+			let moduleItem = modules[i];
 
 			if(typeof moduleItem == 'string'){
 				moduleItem = { name: moduleItem };
@@ -74,10 +74,10 @@ export default class application extends module {
 			if(typeof moduleItem.class != 'undefined'){
 				this[moduleItem.name] = new moduleItem.class();
 			}else{
-				moduleClass = require('../modules/' + moduleItem.name).default;
+				let moduleClass = require('../modules/' + moduleItem.name).default;
 				this[moduleItem.name] = new moduleClass();
 			}
-		});
+		}
 	}
 
 	/**

@@ -1233,22 +1233,20 @@ var application = function (_module) {
 	}, {
 		key: '__includeModules',
 		value: function __includeModules(modules) {
-			var _this3 = this;
-
-			modules.forEach(function (moduleItem, k) {
-				var moduleClass = void 0;
+			for (var i in modules) {
+				var moduleItem = modules[i];
 
 				if (typeof moduleItem == 'string') {
 					moduleItem = { name: moduleItem };
 				}
 				moduleItem = $.extend(true, moduleDefaults, moduleItem);
 				if (typeof moduleItem.class != 'undefined') {
-					_this3[moduleItem.name] = new moduleItem.class();
+					this[moduleItem.name] = new moduleItem.class();
 				} else {
-					moduleClass = __webpack_require__(11)("./" + moduleItem.name).default;
-					_this3[moduleItem.name] = new moduleClass();
+					var moduleClass = __webpack_require__(11)("./" + moduleItem.name).default;
+					this[moduleItem.name] = new moduleClass();
 				}
-			});
+			}
 		}
 
 		/**
@@ -1265,7 +1263,7 @@ var application = function (_module) {
 	}, {
 		key: '__loadModules',
 		value: function __loadModules(modules) {
-			var _this4 = this;
+			var _this3 = this;
 
 			var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 			var async = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
@@ -1303,7 +1301,7 @@ var application = function (_module) {
 					this.__loadModules(modules, null, true).done(callback);
 				} else {
 					promise.done(function () {
-						_this4.__loadModules(modules, null, true).done(callback);
+						_this3.__loadModules(modules, null, true).done(callback);
 					});
 				}
 			} else {
