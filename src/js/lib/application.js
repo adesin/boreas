@@ -63,13 +63,12 @@ export default class application extends module {
 
 	__includeModules (modules){
 		for(let i in modules){
-			let moduleItem = modules[i],
-				__defaults = moduleDefaults;
-
+			let moduleItem = $.extend({}, moduleDefaults);
 			if(typeof moduleItem == 'string'){
-				moduleItem = { name: moduleItem };
+				moduleItem.name = modules[i];
+			}else{
+				moduleItem = $.extend(true, moduleItem, modules[i] );
 			}
-			moduleItem = $.extend( true, __defaults, moduleItem );
 
 			if(typeof moduleItem.class != 'undefined'){
 				this[moduleItem.name] = new moduleItem.class();
@@ -95,16 +94,17 @@ export default class application extends module {
 			promise = (async===false)?null:[];
 
 		for(let i in modules){
-			let moduleItem = modules[i],
-				__defaults = moduleDefaults;
-
-
+			let moduleItem = $.extend({}, moduleDefaults);
 			if(typeof moduleItem == 'string'){
-				moduleItem = { name: moduleItem };
+				moduleItem.name = modules[i];
+			}else{
+				moduleItem = $.extend(true, moduleItem, modules[i] );
 			}
-			moduleItem = $.extend( true, __defaults, moduleItem );
-			if(async !== moduleItem.async) return;  //  Отсеиваем модули с другим типом загрузки
-			if(!_this.__isModuleEnabled(moduleItem)) return; //  Отсеиваем отключённые модули
+
+			if(async !== moduleItem.async) continue;  //  Отсеиваем модули с другим типом загрузки
+			if(!_this.__isModuleEnabled(moduleItem)) continue; //  Отсеиваем отключённые модули
+
+			_this.log(moduleItem);
 
 			if(async===false){//  Синхронная загрузка модулей
 				if(promise === null){
