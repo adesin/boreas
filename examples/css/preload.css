@@ -10,13 +10,19 @@ body.boreas-preloader-opened {
 }
 
 .boreas-preloader {
-	background-color: #424242;
 	position: fixed;
 	left: 0;
 	top: 0;
 	text-align: center;
 	height: 100%;
 	width: 100%;
+	z-index:9999;
+
+	background: #06344e;
+	background: -moz-radial-gradient(center, ellipse cover, #052c41 0%, #031925 100%);
+	background: -webkit-radial-gradient(center, ellipse cover, #052c41 0%,#031925 100%);
+	background: radial-gradient(ellipse at center, #052c41 0%,#031925 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#052c41', endColorstr='#031925',GradientType=1 );
 }
 
 .boreas-preloader .progress {
@@ -24,18 +30,21 @@ body.boreas-preloader-opened {
 	width: 100%;
 	top: 50%;
 	left: 0;
+	margin-top:-2px;
+	background-color:#fff;
 }
 .boreas-preloader .progress,
 .boreas-preloader .progress-bar {
-	height:1px;
+	height:4px;
 	border-radius:0;
 }
 
 .boreas-preloader .progress-bar {
-	-webkit-transition: all .4s ease;
-	-moz-transition: all .4s ease;
-	-o-transition: all .4s ease;
-	transition: all .4s ease;
+	-webkit-transition: all .7s ease;
+	-moz-transition: all .7s ease;
+	-o-transition: all .7s ease;
+	transition: all .7s ease;
+	background-color:#009cf6;
 }
 
 
