@@ -951,8 +951,10 @@ var preloader = function (_module) {
 
 		var _this2 = _possibleConstructorReturn(this, (preloader.__proto__ || Object.getPrototypeOf(preloader)).call(this));
 
-		_this2.__registerEvents(['progress']);
-		_this2.params = {
+		var scope = _this2;
+
+		scope.__registerEvents(['progress']);
+		scope.params = {
 			handlers: [], //  Дополнительные обработчики
 			methods: { //  Методы для работы с представлениям, для переопределения
 				show: _this2.__showPreloader,
@@ -960,75 +962,78 @@ var preloader = function (_module) {
 				hide: _this2.__hidePreloader
 			},
 			media: true, //  Обрабатывать HTML5 Media (<audio>  и <video>)
-			delay: 200, //  Время ожидания перед скрытием прелодера
-			timeout: 10000 //  Максимальное время загрузки (на случай зависания)
+			delay: 400, //  Время ожидания перед скрытием прелодера
+			timeout: 30000 //  Максимальное время загрузки (на случай зависания)
 		};
-		_this2.__handlers = [];
-		_this2.__status = {
+		scope.__handlers = [];
+		scope.__status = {
 			total: 0,
 			loaded: 0,
 			src: null,
 			desc: null
 		};
-		_this2.__$preloader = null;
-		_this2.__watcherTt = null;
+		scope.__$preloader = null;
+		scope.__queue = [];
+		scope.__watcherTt = null;
+		scope.__ready = false;
 		return _this2;
 	}
 
 	_createClass(preloader, [{
 		key: "initialize",
 		value: function initialize() {
-			var _this3 = this;
-
 			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-			var _this = this,
-			    _ready = false;
-			$.extend(true, this.params, params);
+			var scope = this;
+			$.extend(true, scope.params, params);
 
-			this.params.methods.show();
+			scope.params.methods.show();
 
 			//  Обработчики по-умолчанию
-			this.addHandler('images', _imagesHandler2.default);
-			if (this.params.media === true) {
-				this.addHandler('media', _mediaHandler2.default);
+			scope.addHandler('images', _imagesHandler2.default);
+			if (scope.params.media === true) {
+				scope.addHandler('media', _mediaHandler2.default);
 			}
 
 			//  Пользовательские обработчики
-			if (this.params.handlers.length) {
-				for (var i in this.params.handlers) {
-					var handler = this.params.handlers[i];
+			if (scope.params.handlers.length) {
+				for (var i in scope.params.handlers) {
+					var handler = scope.params.handlers[i];
 					if (typeof handler.params == 'undefined') handler.params = {};
 					this.addHandler(handler.name, handler.class, handler.params);
 				}
 			}
-			this.__load();
-			this.__animationWatcher();
+			scope.__load();
+			//scope.__animationWatcher();
 
-			if (this.params.timeout > 0) {
+			if (scope.params.timeout > 0) {
 				setTimeout(function () {
-					if (_ready === false) {
-						_this.__forceFinish();
-						_ready = true;
+					if (scope.__ready === false) {
+						scope.__forceFinish();
+						scope.__ready = true;
 					}
-				}, this.params.timeout //  На случай если загрузка длится дольше, чем указано в настройках
+				}, scope.params.timeout //  На случай если загрузка длится дольше, чем указано в настройках
 				);
 			}
 
-			this.on('progress', function (status) {
+			scope.on('progress', function (status) {
+				scope.params.methods.update(status);
+
 				if (status.loaded == status.total) {
 					setTimeout(function () {
-						if (_ready === false) {
-							_this.trigger('ready');
-							_ready = true;
+						if (scope.__ready === false) {
+							if (!scope.__queue.length) {
+								scope.trigger('ready');
+							}
+							scope.__ready = true;
 						}
-					}, _this.params.delay);
+					}, scope.params.delay);
 				}
 			});
-			this.on('ready', function () {
+			scope.on('ready', function () {
 				window.scrollTo(0, 0);
-				_this3.params.methods.hide();
-				_this3.__animationWatcher(false);
+				scope.params.methods.hide();
+				//scope.__animationWatcher(false);
 			});
 		}
 	}, {
@@ -1047,18 +1052,26 @@ var preloader = function (_module) {
 		value: function __animationWatcher() {
 			var start = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
 
-			var scope = this,
-			    value = 0;
+			var scope = this;
 
 			if (start === false) {
 				clearInterval(this.__watcherTt);
 				scope.__watcherTt = null;
 			} else if (start === true && scope.__watcherTt === null) {
 				scope.__watcherTt = setInterval(function () {
-					if (scope.__status.loaded > value) {
-						scope.params.methods.update(scope.__status);
+					if (scope.__queue.length) {
+						var status = scope.__queue.shift();
+
+						scope.log('show: ' + status.loaded + '/' + status.total);
+						//scope.log('left:');
+						//scope.log(JSON.stringify(scope.__queue));
+
+						scope.params.methods.update(status);
+					} else if (scope.__ready === true) {
+						scope.trigger('ready');
+						//scope.__animationWatcher(false);
 					}
-				}, scope.params.delay);
+				}, scope.__delay / scope.__total);
 			}
 		}
 	}, {
@@ -1076,7 +1089,7 @@ var preloader = function (_module) {
 		value: function __updatePercent() {
 			var status = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
-			if (!status) status = this.__getStatus();
+			//if(!status) status = this.__getStatus();
 
 			var percent = parseInt(100 / status.total * status.loaded);
 			//this.log(percent);
@@ -1106,8 +1119,8 @@ var preloader = function (_module) {
 
 			for (var i in this.__handlers) {
 				this.__handlers[i].instance = new this.__handlers[i].class();
-				this.__handlers[i].instance.on('progress', function (params) {
-					_this.__updateStatus(params);
+				this.__handlers[i].instance.on('progress', function (status) {
+					_this.__updateStatus(status);
 					_this.trigger('progress', _this.__status);
 				});
 
@@ -1278,8 +1291,6 @@ var application = function (_module) {
 
 				if (async !== moduleItem.async) return 'continue'; //  Отсеиваем модули с другим типом загрузки
 				if (!_this.__isModuleEnabled(moduleItem)) return 'continue'; //  Отсеиваем отключённые модули
-
-				_this.log(moduleItem);
 
 				if (async === false) {
 					//  Синхронная загрузка модулей

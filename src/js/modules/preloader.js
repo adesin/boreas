@@ -13,9 +13,10 @@ export default class preloader extends module {
 
 	constructor (){
 		super();
+		let scope = this;
 
-		this.__registerEvents(['progress']);
-		this.params = {
+		scope.__registerEvents(['progress']);
+		scope.params = {
 			handlers: [],   //  Дополнительные обработчики
 			methods: {      //  Методы для работы с представлениям, для переопределения
 				show: this.__showPreloader,
@@ -23,67 +24,72 @@ export default class preloader extends module {
 				hide: this.__hidePreloader,
 			},
 			media: true,    //  Обрабатывать HTML5 Media (<audio>  и <video>)
-			delay: 200,     //  Время ожидания перед скрытием прелодера
-			timeout: 10000, //  Максимальное время загрузки (на случай зависания)
+			delay: 400,     //  Время ожидания перед скрытием прелодера
+			timeout: 30000, //  Максимальное время загрузки (на случай зависания)
 		};
-		this.__handlers = [];
-		this.__status = {
+		scope.__handlers = [];
+		scope.__status = {
 			total: 0,
 			loaded: 0,
 			src: null,
 			desc: null,
 		}
-		this.__$preloader = null;
-		this.__watcherTt = null;
+		scope.__$preloader = null;
+		scope.__queue = [];
+		scope.__watcherTt = null;
+		scope.__ready = false;
 	}
 
 	initialize (params={}) {
-		let _this = this,
-			_ready = false;
-		$.extend( true, this.params, params );
+		let scope = this;
+		$.extend( true, scope.params, params );
 
-		this.params.methods.show();
+		scope.params.methods.show();
 
 		//  Обработчики по-умолчанию
-		this.addHandler('images', imagesHandler);
-		if(this.params.media === true){
-			this.addHandler('media', mediaHandler);
+		scope.addHandler('images', imagesHandler);
+		if(scope.params.media === true){
+			scope.addHandler('media', mediaHandler);
 		}
 
 		//  Пользовательские обработчики
-		if(this.params.handlers.length){
-			for(let i in this.params.handlers){
-				let handler = this.params.handlers[i];
+		if(scope.params.handlers.length){
+			for(let i in scope.params.handlers){
+				let handler = scope.params.handlers[i];
 				if(typeof handler.params == 'undefined') handler.params = {};
 				this.addHandler(handler.name, handler.class, handler.params);
 			}
 		}
-		this.__load();
-		this.__animationWatcher();
+		scope.__load();
+		//scope.__animationWatcher();
 
-		if(this.params.timeout > 0){
+		if(scope.params.timeout > 0){
 			setTimeout(()=>{
-				if(_ready === false){
-					_this.__forceFinish();
-					_ready = true;
+				if(scope.__ready === false){
+					scope.__forceFinish();
+					scope.__ready = true;
 				}
-			}, this.params.timeout)  //  На случай если загрузка длится дольше, чем указано в настройках
+			}, scope.params.timeout)  //  На случай если загрузка длится дольше, чем указано в настройках
 		}
 
-		this.on('progress', (status) => {
+		scope.on('progress', (status) => {
+			scope.params.methods.update(status);
+
 			if(status.loaded == status.total){
 				setTimeout(function(){
-					if(_ready === false){
-						_this.trigger('ready');
-						_ready = true;
+					if(scope.__ready === false){
+						if(!scope.__queue.length){
+							scope.trigger('ready');
+						}
+						scope.__ready = true;
 					}
-				}, _this.params.delay);
+				}, scope.params.delay);
 			}
 		});
-		this.on('ready', () => {
+		scope.on('ready', () => {
 			window.scrollTo(0, 0);
-			this.params.methods.hide();
-			this.__animationWatcher(false);
+			scope.params.methods.hide();
+			//scope.__animationWatcher(false);
 		});
 	}
 
@@ -95,20 +101,27 @@ export default class preloader extends module {
 		});
 	}
 
-
 	__animationWatcher (start=true){
-		let scope = this,
-			value = 0;
+		let scope = this;
 
 		if(start === false){
 			clearInterval(this.__watcherTt);
 			scope.__watcherTt = null;
 		}else if(start === true && scope.__watcherTt === null){
 			scope.__watcherTt = setInterval(() => {
-				if(scope.__status.loaded > value){
-					scope.params.methods.update(scope.__status);
+				if(scope.__queue.length){
+					let status = scope.__queue.shift();
+
+					scope.log('show: ' + status.loaded + '/' + status.total);
+					//scope.log('left:');
+					//scope.log(JSON.stringify(scope.__queue));
+
+					scope.params.methods.update(status);
+				}else if(scope.__ready === true){
+					scope.trigger('ready');
+					//scope.__animationWatcher(false);
 				}
-			}, scope.params.delay);
+			}, scope.__delay / scope.__total);
 		}
 
 	}
@@ -126,7 +139,7 @@ export default class preloader extends module {
 		}
 	}
 	__updatePercent (status=null) {
-		if(!status) status = this.__getStatus();
+		//if(!status) status = this.__getStatus();
 
 		let percent = parseInt(100 / status.total * status.loaded);
 		//this.log(percent);
@@ -154,8 +167,8 @@ export default class preloader extends module {
 
 		for(let i in this.__handlers){
 			this.__handlers[i].instance = new this.__handlers[i].class();
-			this.__handlers[i].instance.on('progress', (params) => {
-				_this.__updateStatus(params)
+			this.__handlers[i].instance.on('progress', (status) => {
+				_this.__updateStatus(status)
 				_this.trigger('progress', _this.__status);
 			});
 

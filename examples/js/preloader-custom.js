@@ -22,16 +22,16 @@
 	 */
 	customPreloaderHandler.prototype.initialize = function (params) {
 		if (typeof params == 'undefined') params = {};
-		var _this = this;
+		var scope = this;
 
 		var ti = setInterval(function(){
-			_this.__loaded += 1;
-			var status = _this.getStatus();
-			status.desc = "element #"+_this.__loaded;
-			_this.trigger('progress', status);
+			scope.__loaded += 1;
+			var status = scope.getStatus();
+			status.desc = "element #"+scope.__loaded;
+			scope.trigger('progress', status);
 			if(status.loaded == status.total){
 				clearInterval(ti);
-				_this.trigger('ready');
+				scope.trigger('ready');
 			}
 		}, 200);
 	};

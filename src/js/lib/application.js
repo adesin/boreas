@@ -104,8 +104,6 @@ export default class application extends module {
 			if(async !== moduleItem.async) continue;  //  Отсеиваем модули с другим типом загрузки
 			if(!_this.__isModuleEnabled(moduleItem)) continue; //  Отсеиваем отключённые модули
 
-			_this.log(moduleItem);
-
 			if(async===false){//  Синхронная загрузка модулей
 				if(promise === null){
 					promise = _this.__loadModule(moduleItem).promise();
