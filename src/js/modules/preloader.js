@@ -24,20 +24,20 @@ export default class preloader extends module {
 				hide: this.__hidePreloader,
 			},
 			media: true,    //  Обрабатывать HTML5 Media (<audio>  и <video>)
-			hideDelay: 1500,     //  Время ожидания перед скрытием прелодера
-			animationDelay: 400,     //  Время ожидания перед скрытием прелодера
+			delay: 800,     //  Время ожидания перед скрытием прелодера
 			timeout: 30000, //  Максимальное время загрузки (на случай зависания)
+			watcher: false, // Использовать watcher для анимации прелодера. int (ms) или false
 		};
-		scope.__handlers = [];
-		scope.__status = {
-			total: 0,
-			loaded: 0,
-			src: null,
-			desc: null,
+		scope.__handlers = [];  // Массив обработчиков прелодера
+		scope.__status = {  // Текущий статус обработчика
+			total: 0,       // Общее число элементов
+			loaded: 0,      // Число загруженных элементов
+			src: null,      // URL последнего загруженного элементв (если есть)
+			desc: null,     // Описание последнего загруженного элементв (если есть)
 		}
-		scope.__$preloader = null;
-		scope.__watcherTt = null;
-		scope.__ready = false;
+		scope.__$preloader = null;  // jQuery-объект прелодера
+		scope.__watcherTt = null;   // Timeout AnimationWatcher'а
+		scope.__ready = false;      // Готовность прелодера. Используется для взаимодействия с методом __forceFinish()
 	}
 
 	initialize (params={}) {
@@ -60,37 +60,54 @@ export default class preloader extends module {
 				this.addHandler(handler.name, handler.class, handler.params);
 			}
 		}
-		scope.__load();
-		scope.__animationWatcher();
+		scope.__initHandlers();
+		if(scope.params.watcher !== false){
+			scope.__animationWatcher();
+		}
 
+		//  На случай если загрузка длится дольше, чем указано в настройках
 		if(scope.params.timeout > 0){
 			setTimeout(()=>{
 				if(scope.__ready === false){
 					scope.__forceFinish();
 					scope.__ready = true;
 				}
-			}, scope.params.timeout)  //  На случай если загрузка длится дольше, чем указано в настройках
+			}, scope.params.timeout);
 		}
 
+		// Прелодер считается загруженным когда общее
+		// количество элементов равно количеству загруженных
 		scope.on('progress', (status) => {
-			//scope.params.methods.update(status);
-
+			if(scope.__watcherTt !== null){ // На случае если не используется __animationWatcher()
+				scope.params.methods.update(status);
+			}
 			if(status.loaded == status.total){
 				setTimeout(function(){
 					if(scope.__ready === false){
 						scope.trigger('ready');
 						scope.__ready = true;
 					}
-				}, scope.params.hideDelay);
+				}, scope.params.delay);
 			}
 		});
+
+		// Действие выполняется когда прелодер загружен
 		scope.on('ready', () => {
 			window.scrollTo(0, 0);
 			scope.params.methods.hide();
-			scope.__animationWatcher(false);
+			if(scope.params.watcher !== false){
+				scope.__animationWatcher(false);
+			}
+
 		});
 	}
 
+	/**
+	 * Добавление обработчика загрузки
+	 * @param name Имя обработчика
+	 * @param handlerClass Класс обработчика. Должен быть унаследован от preloader/handler.js
+	 * @param params Параметры инициализации обработчика
+	 */
 	addHandler (name, handlerClass, params={}) {
 		this.__handlers.push({
 			name: name,
@@ -99,7 +116,16 @@ export default class preloader extends module {
 		});
 	}
 
+	/**
+	 * Метод отвечает за плавность анимации загрузки.
+	 * Прелодер обновляется через  интервал scope.params.watcher,
+	 * так-же к прогресс-бару необходимо добавить transition,
+	 * по длительности равный данному параметру
+	 * @param (boolean) start Запустить или остановить "animationWatcher"
+	 * @private
+	 */
 	__animationWatcher (start=true){
+		if(scope.params.watcher === false) return;
 		let scope = this,
 			value = 0;
 
@@ -108,16 +134,19 @@ export default class preloader extends module {
 			scope.__watcherTt = null;
 		}else if(start === true && scope.__watcherTt === null){
 			scope.__watcherTt = setInterval(() => {
-				//scope.log(scope.__status);
-
 				if(value < scope.__status.loaded){
 					scope.params.methods.update(scope.__status);
 					value = scope.__status.loaded;
 				}
-			}, scope.params.animationDelay);
+			}, scope.params.watcher);
 		}
 	}
 
+	/**
+	 * Метод отображает прелодер.
+	 * Переопределяется параметром methods.show.
+	 * @private
+	 */
 	__showPreloader (){
 		$('body').addClass('boreas-preloader-opened');
 		this.__$preloader = $('.boreas-preloader');
@@ -130,23 +159,37 @@ export default class preloader extends module {
 			$('body').append(this.__$preloader);
 		}
 	}
-	__updateBar (status=null) {
-		//if(!status) status = this.__getStatus();
 
+	/**
+	 * Метод обновляет прогресс-бар.
+	 * Переопределяется параметром methods.update.
+	 * @param status
+	 * @private
+	 */
+	__updateBar (status=null) {
 		let percent = parseInt(100 / status.total * status.loaded);
-		//this.log(percent);
 
 		this.__$preloader
 			.find('.progress-bar')
 			.css({width: percent+'%'})
-			.attr('aria-valuenow', percent)
-			//.text(percent+'%');
+			.attr('aria-valuenow', percent);
 	}
+
+	/**
+	 * Метод скрывает прелодер.
+	 * Переопределяется параметром methods.hide.
+	 * @private
+	 */
 	__hidePreloader (){
 		$('body').removeClass('boreas-preloader-opened');
 		this.__$preloader.fadeOut();
 	}
 
+	/**
+	 * Метод принудительно останавливает и скрывает прелодер.
+	 * Предназначен для случаев зависания.
+	 * @private
+	 */
 	__forceFinish (){
 		let status = this.__status;
 		status.loaded = status.total;
@@ -154,7 +197,11 @@ export default class preloader extends module {
 		this.trigger('ready');
 	}
 
-	__load () {
+	/**
+	 * Инициализациф обработчиков
+	 * @private
+	 */
+	__initHandlers () {
 		let _this = this;
 
 		for(let i in this.__handlers){
@@ -168,6 +215,13 @@ export default class preloader extends module {
 		}
 	}
 
+	/**
+	 * Обновление статуса прелодера.
+	 * Метод подсчитывает общее число всех и загруженных элементов
+	 * из всех обработчиков и записывает их в scope.__status
+	 * @param params
+	 * @private
+	 */
 	__updateStatus (params={}){
 		this.__status.total = 0;
 		this.__status.loaded = 0;

@@ -37,7 +37,7 @@ export default class module extends base {
 	 * @param callback Функция-обработчик события
 	 * @returns {boolean}
 	 */
-	on (name=null, callback=(params, handler)=>{}){
+	on (name=null, callback=(params, scope)=>{}){
 		if(!name || !callback || typeof callback != 'function'){
 			this.log(`${this.constructor.name}.on: Не переданы обязательные параметры`);
 			return false;
@@ -82,7 +82,7 @@ export default class module extends base {
 	 */
 	trigger (name=null, params = {}) {
 		if(typeof this.__events[name] != 'undefined'){
-			return this.__events[name].execute(params);
+			return this.__events[name].execute(params, this);
 		}
 		return false;
 	}
