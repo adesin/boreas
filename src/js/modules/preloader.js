@@ -78,7 +78,7 @@ export default class preloader extends module {
 		// Прелодер считается загруженным когда общее
 		// количество элементов равно количеству загруженных
 		scope.on('progress', (status) => {
-			if(scope.__watcherTt !== null){ // На случае если не используется __animationWatcher()
+			if(scope.__watcherTt === null){ // На случае если не используется __animationWatcher()
 				scope.params.methods.update(status);
 			}
 			if(status.loaded == status.total){

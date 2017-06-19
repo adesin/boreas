@@ -1021,7 +1021,7 @@ var preloader = function (_module) {
 			// Прелодер считается загруженным когда общее
 			// количество элементов равно количеству загруженных
 			scope.on('progress', function (status) {
-				if (scope.__watcherTt !== null) {
+				if (scope.__watcherTt === null) {
 					// На случае если не используется __animationWatcher()
 					scope.params.methods.update(status);
 				}
