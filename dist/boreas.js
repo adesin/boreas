@@ -364,14 +364,15 @@ var imagesHandler = function (_handler) {
 	function imagesHandler() {
 		_classCallCheck(this, imagesHandler);
 
-		var _this2 = _possibleConstructorReturn(this, (imagesHandler.__proto__ || Object.getPrototypeOf(imagesHandler)).call(this));
+		var _this = _possibleConstructorReturn(this, (imagesHandler.__proto__ || Object.getPrototypeOf(imagesHandler)).call(this));
 
-		_this2.params = {
+		_this.params = {
 			selector: 'html',
 			regex: {
 				file: /(?:href="(.*?)")|(?:src="(.*?)")|(?:url\((.*?)\))/ig,
-				quote: /(&quot;)|(')|(")/g
-				//url: /^.*url\(([^\)]+)\).*$/i
+				quote: /(&quot;)|(')|(")/g,
+				font: /@font-face\s*{([^}]*)}/ig,
+				url: /url\(([^\)]+)\)/ig
 			},
 			extensions: {
 				image: ["jpg", "jpeg", "png", "gif", "svg"],
@@ -380,22 +381,22 @@ var imagesHandler = function (_handler) {
 			},
 			searchInCss: true
 		};
-		_this2.__found = null;
-		_this2.__loaded = [];
-		return _this2;
+		_this.__found = null;
+		_this.__loaded = [];
+		return _this;
 	}
 
 	_createClass(imagesHandler, [{
 		key: "initialize",
 		value: function initialize() {
-			var _this3 = this;
+			var _this2 = this;
 
 			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
 			$.extend(true, this.params, params);
 
 			//  Создаём ключи объекта в который будут помещаться найденные ресурсы
-			this.__found = {};
+			this.__found = { font: [] };
 			for (var type in this.params.extensions) {
 				this.__found[type] = [];
 			}
@@ -407,7 +408,7 @@ var imagesHandler = function (_handler) {
 			//  Если в параметрах включена подгрузка CSS - то грузим их и обрабатываем
 			if (this.params.searchInCss === true && this.__found.css.length) {
 				this.__processCss(str).done(function () {
-					_this3.__loadFiles();
+					_this2.__loadFiles();
 				});
 			} else {
 				this.__loadFiles();
@@ -433,6 +434,8 @@ var imagesHandler = function (_handler) {
 	}, {
 		key: "__findSources",
 		value: function __findSources(str) {
+			this.__findFonts(str); // Сначала ищем в нашей строке шрифты
+
 			var match = void 0;
 			while (match = this.params.regex.file.exec(str)) {
 				for (var i = match.length - 1; i >= 0; i--) {
@@ -440,9 +443,45 @@ var imagesHandler = function (_handler) {
 						var url = match[i];
 						url = url.replace(this.params.regex.quote, ''); //  Убираем ковычки из URL
 						if (!url.length || url == '#' || url.indexOf('data:') !== -1) break; //  Отсекаем мусор
+						if (this.__found.font.indexOf(url) !== -1) break; // Отсекаем найденные шрифты
+
 						var fileType = this.__identifyFileType(url);
-						if (fileType) {
+						if (fileType && this.__found[fileType].indexOf(url) == -1) {
 							this.__found[fileType].push(url);
+						}
+						break;
+					}
+				}
+			}
+		}
+
+		/**
+   * Метод ищет шрифты в строке
+   * Внимание! Данный обработчик не выполняет предзагрузку шрифтов, он их исключает
+   * @param str
+   * @private
+   */
+
+	}, {
+		key: "__findFonts",
+		value: function __findFonts(str) {
+			var match = void 0,
+			    subMatch = void 0;
+			while (match = this.params.regex.font.exec(str)) {
+				for (var i = match.length - 1; i >= 0; i--) {
+					if (typeof match[i] !== 'undefined') {
+						var subStr = match[i];
+						while (subMatch = this.params.regex.url.exec(subStr)) {
+							for (var _i = subMatch.length - 1; _i >= 0; _i--) {
+								if (typeof subMatch[_i] !== 'undefined') {
+									var url = subMatch[_i];
+									url = url.replace(this.params.regex.quote, ''); //  Убираем ковычки из URL
+									if (!url.length || url == '#' || url.indexOf('data:') !== -1) break; //  Отсекаем мусор
+
+									this.__found['font'].push(url);
+									break;
+								}
+							}
 						}
 						break;
 					}
@@ -481,19 +520,20 @@ var imagesHandler = function (_handler) {
 	}, {
 		key: "__loadFiles",
 		value: function __loadFiles() {
-			var _this4 = this;
+			var _this3 = this;
 
-			if (!this.__found.image.length) return;
 			var promise = [];
 
-			var _loop = function _loop(i) {
-				_this4.__loadFileAsync(_this4.__found.image[i]).promise().done(function () {
-					_this4.__updateStatus(_this4.__found.image[i]);
-				});
-			};
+			if (typeof this.__found.image != 'undefined' && this.__found.image.length) {
+				var _loop = function _loop(i) {
+					_this3.__loadImageAsync(_this3.__found.image[i]).promise().done(function () {
+						_this3.__updateStatus(_this3.__found.image[i]);
+					});
+				};
 
-			for (var i in this.__found.image) {
-				_loop(i);
+				for (var i in this.__found.image) {
+					_loop(i);
+				}
 			}
 		}
 
@@ -521,15 +561,15 @@ var imagesHandler = function (_handler) {
 		}
 
 		/**
-   * Метод загружает файл в асинхронном режиме
+   * Метод загружает изображение в асинхронном режиме
    * @param url URL файла
    * @return {$.Deferred} Метод возвращает Deferred's Promise object
    * @private
    */
 
 	}, {
-		key: "__loadFileAsync",
-		value: function __loadFileAsync(url) {
+		key: "__loadImageAsync",
+		value: function __loadImageAsync(url) {
 			var defer = new $.Deferred();
 
 			var image = new Image();
@@ -571,13 +611,13 @@ var imagesHandler = function (_handler) {
 	}, {
 		key: "__processUrlAsync",
 		value: function __processUrlAsync(url) {
-			var _this = this,
+			var scope = this,
 			    defer = new $.Deferred();
 
 			$.ajax({
 				url: url
 			}).done(function (response) {
-				_this.__findSources(response);
+				scope.__findSources(response);
 				defer.resolve();
 			}).fail(function () {
 				defer.resolve();

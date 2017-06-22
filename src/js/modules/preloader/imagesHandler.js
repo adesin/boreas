@@ -16,7 +16,8 @@ export default class imagesHandler extends handler {
 			regex: {
 				file: /(?:href="(.*?)")|(?:src="(.*?)")|(?:url\((.*?)\))/ig,
 				quote: /(&quot;)|(')|(")/g,
-				//url: /^.*url\(([^\)]+)\).*$/i
+				font: /@font-face\s*{([^}]*)}/ig,
+				url: /url\(([^\)]+)\)/ig,
 			},
 			extensions: {
 				image: ["jpg", "jpeg", "png", "gif", "svg"],
@@ -33,7 +34,7 @@ export default class imagesHandler extends handler {
 		$.extend( true, this.params, params );
 
 		//  Создаём ключи объекта в который будут помещаться найденные ресурсы
-		this.__found = {};
+		this.__found = { font:[] };
 		for(let type in this.params.extensions){
 			this.__found[type] = [];
 		}
@@ -67,6 +68,8 @@ export default class imagesHandler extends handler {
 	 * @private
 	 */
 	__findSources (str) {
+		this.__findFonts(str);  // Сначала ищем в нашей строке шрифты
+
 		let match;
 		while(match = this.params.regex.file.exec(str)){
 			for(let i = match.length - 1; i >= 0; i--){
@@ -74,9 +77,41 @@ export default class imagesHandler extends handler {
 					let url = match[i];
 					url = url.replace(this.params.regex.quote, ''); //  Убираем ковычки из URL
 					if(!url.length || url == '#' || url.indexOf('data:') !== -1) break; //  Отсекаем мусор
+					if(this.__found.font.indexOf(url) !== -1) break;   // Отсекаем найденные шрифты
+
 					let fileType = this.__identifyFileType(url);
-					if(fileType){
+					if(fileType && this.__found[fileType].indexOf(url) == -1){
 						this.__found[fileType].push(url);
+					}
+					break;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Метод ищет шрифты в строке
+	 * Внимание! Данный обработчик не выполняет предзагрузку шрифтов, он их исключает
+	 * @param str
+	 * @private
+	 */
+	__findFonts (str) {
+		let match, subMatch;
+		while(match = this.params.regex.font.exec(str)) {
+			for (let i = match.length - 1; i >= 0; i--) {
+				if (typeof match[i] !== 'undefined') {
+					let subStr = match[i];
+					while(subMatch = this.params.regex.url.exec(subStr)) {
+						for (let i = subMatch.length - 1; i >= 0; i--) {
+							if (typeof subMatch[i] !== 'undefined') {
+								let url = subMatch[i];
+								url = url.replace(this.params.regex.quote, ''); //  Убираем ковычки из URL
+								if(!url.length || url == '#' || url.indexOf('data:') !== -1) break; //  Отсекаем мусор
+
+								this.__found['font'].push(url);
+								break;
+							}
+						}
 					}
 					break;
 				}
@@ -109,13 +144,14 @@ export default class imagesHandler extends handler {
 	 * @private
 	 */
 	__loadFiles () {
-		if (!this.__found.image.length) return;
 		let promise = [];
 
-		for(let i in this.__found.image){
-			this.__loadFileAsync(this.__found.image[i]).promise().done(() => {
-				this.__updateStatus(this.__found.image[i]);
-			});
+		if(typeof this.__found.image != 'undefined' && this.__found.image.length) {
+			for (let i in this.__found.image) {
+				this.__loadImageAsync(this.__found.image[i]).promise().done(() => {
+					this.__updateStatus(this.__found.image[i]);
+				});
+			}
 		}
 	}
 
@@ -140,12 +176,12 @@ export default class imagesHandler extends handler {
 	}
 
 	/**
-	 * Метод загружает файл в асинхронном режиме
+	 * Метод загружает изображение в асинхронном режиме
 	 * @param url URL файла
 	 * @return {$.Deferred} Метод возвращает Deferred's Promise object
 	 * @private
 	 */
-	__loadFileAsync (url) {
+	__loadImageAsync (url) {
 		let defer = new $.Deferred();
 
 		let image = new Image();
@@ -159,7 +195,6 @@ export default class imagesHandler extends handler {
 
 		return defer;
 	}
-
 
 	/**
 	 * Загрузка и обработка CSS-файлов
@@ -182,13 +217,13 @@ export default class imagesHandler extends handler {
 	 * @private
 	 */
 	__processUrlAsync (url){
-		let _this = this,
+		let scope = this,
 			defer = new $.Deferred();
 
 		$.ajax({
 			url: url
 		}).done((response) => {
-			_this.__findSources(response);
+			scope.__findSources(response);
 			defer.resolve();
 		}).fail(() => {
 			defer.resolve();
