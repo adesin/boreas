@@ -9,12 +9,14 @@ import application from './lib/application';
 import module from './lib/module';
 import handler from './modules/preloader/handler';
 import extend from './lib/extend';
+import network from './lib/network';
 
 export {
 	application,
 	module,
 	extend,
-	handler as preloaderHandler
+	handler as preloaderHandler,
+	network
 };
 
 

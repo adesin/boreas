@@ -10,7 +10,6 @@ import handler from "./handler";
 export default class mediaHandler extends handler {
 	constructor () {
 		super();
-
 		this.params = {
 			selector: 'audio, video',
 		};
@@ -58,12 +57,12 @@ export default class mediaHandler extends handler {
 				media.load();
 			}
 			media.oncanplay = () => {
-				scope.__itemLoaded(media.currentSrc);
+				scope.__updateItem(media.currentSrc);
 				defer.resolve();
 				media.oncanplay = null;
 			};
 			media.onerror = () => {
-				scope.__itemLoaded(media.currentSrc);
+				scope.__updateItem(media.currentSrc);
 				defer.resolve();
 				media.onerror = null;
 			};
@@ -84,7 +83,7 @@ export default class mediaHandler extends handler {
 	 * Говорим что был загружен один элемент
 	 * @private
 	 */
-	__itemLoaded (src){
+	__updateItem (src){
 		this.__loaded++;
 		let status = this.getStatus();
 		status.src = src;
