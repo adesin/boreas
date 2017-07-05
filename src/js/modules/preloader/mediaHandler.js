@@ -24,7 +24,7 @@ export default class mediaHandler extends handler {
 		$.extend( true, this.params, params );
 
 		let loadMethod = (scope.params.blob)?'__loadMediaBlob':'__loadMedia';
-		this['loadMethod']().done(() => {
+		this[loadMethod]().done(() => {
 			scope.trigger('ready');
 		});
 	}
@@ -101,9 +101,10 @@ export default class mediaHandler extends handler {
 
 			req.onload = function() {
 				if (this.status === 200) {
-					var videoBlob = this.response;
-					var vid = URL.createObjectURL(videoBlob); // IE10+
-					video.src = vid;
+					let mediaBlob = this.response;
+					let blobUrl = URL.createObjectURL(mediaBlob); // IE10+
+					media.src = blobUrl;
+
 				}
 
 				scope.__updateItem(media.currentSrc);

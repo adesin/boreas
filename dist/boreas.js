@@ -732,7 +732,7 @@ var mediaHandler = function (_handler) {
 			$.extend(true, this.params, params);
 
 			var loadMethod = scope.params.blob ? '__loadMediaBlob' : '__loadMedia';
-			this['loadMethod']().done(function () {
+			this[loadMethod]().done(function () {
 				scope.trigger('ready');
 			});
 		}
@@ -816,9 +816,9 @@ var mediaHandler = function (_handler) {
 
 				req.onload = function () {
 					if (this.status === 200) {
-						var videoBlob = this.response;
-						var vid = URL.createObjectURL(videoBlob); // IE10+
-						video.src = vid;
+						var mediaBlob = this.response;
+						var blobUrl = URL.createObjectURL(mediaBlob); // IE10+
+						media.src = blobUrl;
 					}
 
 					scope.__updateItem(media.currentSrc);
@@ -1051,7 +1051,7 @@ var preloader = function (_module) {
 				update: _this2.__updateBar,
 				hide: _this2.__hidePreloader
 			},
-			media: false, //  Обрабатывать HTML5 Media (<audio>  и <video>)
+			media: true, //  Обрабатывать HTML5 Media (<audio>  и <video>)
 			delay: 800, //  Время ожидания перед скрытием прелодера
 			timeout: 30000, //  Максимальное время загрузки (на случай зависания)
 			watcher: false // Использовать watcher для анимации прелодера. int (ms) или false

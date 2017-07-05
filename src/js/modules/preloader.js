@@ -23,7 +23,7 @@ export default class preloader extends module {
 				update: this.__updateBar,
 				hide: this.__hidePreloader,
 			},
-			media: false,    //  Обрабатывать HTML5 Media (<audio>  и <video>)
+			media: true,    //  Обрабатывать HTML5 Media (<audio>  и <video>)
 			delay: 800,     //  Время ожидания перед скрытием прелодера
 			timeout: 30000, //  Максимальное время загрузки (на случай зависания)
 			watcher: false, // Использовать watcher для анимации прелодера. int (ms) или false
@@ -34,7 +34,7 @@ export default class preloader extends module {
 			loaded: 0,      // Число загруженных элементов
 			src: null,      // URL последнего загруженного элементв (если есть)
 			desc: null,     // Описание последнего загруженного элементв (если есть)
-		}
+		};
 		scope.__$preloader = null;  // jQuery-объект прелодера
 		scope.__watcherTt = null;   // Timeout AnimationWatcher'а
 		scope.__ready = false;      // Готовность прелодера. Используется для взаимодействия с методом __forceFinish()
