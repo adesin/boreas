@@ -767,10 +767,11 @@ var mediaHandler = function (_handler) {
 
 				scope.__total++;
 
+				//alert(media.currentSrc);
+
 				if (media.preload == 'none') {
-					//media.load();
-					media.play();
-					media.pause();
+					media.load();
+					//media.preload = 'auto';
 				}
 				media.oncanplay = function () {
 					scope.__updateItem(media.currentSrc);

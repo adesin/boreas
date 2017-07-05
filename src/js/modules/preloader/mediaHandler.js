@@ -53,10 +53,11 @@ export default class mediaHandler extends handler {
 
 			scope.__total++;
 
+			//alert(media.currentSrc);
+
 			if(media.preload == 'none'){
-				//media.load();
-				media.play();
-				media.pause();
+				media.load();
+				//media.preload = 'auto';
 			}
 			media.oncanplay = () => {
 				scope.__updateItem(media.currentSrc);
