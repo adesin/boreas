@@ -12,7 +12,9 @@ export default class mediaHandler extends handler {
 		super();
 		this.params = {
 			selector: 'audio, video',
+			blob: true,
 		};
+
 		this.__total = 0;
 		this.__loaded = 0;
 	}
@@ -21,7 +23,8 @@ export default class mediaHandler extends handler {
 		let scope = this;
 		$.extend( true, this.params, params );
 
-		this.__loadMedia().done(() => {
+		let loadMethod = (scope.params.blob)?'__loadMediaBlob':'__loadMedia';
+		this['loadMethod']().done(() => {
 			scope.trigger('ready');
 		});
 	}
@@ -69,6 +72,49 @@ export default class mediaHandler extends handler {
 				defer.resolve();
 				media.onerror = null;
 			};
+			promise.push(defer);
+		});
+
+		//  Если promise пуст, то создаём и резолвим пустой $.Deferred()
+		if(!promise.length){
+			let defer = new $.Deferred();
+			defer.resolve();
+			promise.push(defer);
+		}
+
+		return $.when.apply(undefined, promise).promise();
+	}
+
+	__loadMediaBlob () {
+		let scope = this,
+			promise = [];
+
+		$(this.params.selector).each(function(){
+			let media = this,
+				defer = new $.Deferred();
+
+			scope.__total++;
+
+			var req = new XMLHttpRequest();
+			req.open('GET', media.currentSrc, true);
+			req.responseType = 'blob';
+
+			req.onload = function() {
+				if (this.status === 200) {
+					var videoBlob = this.response;
+					var vid = URL.createObjectURL(videoBlob); // IE10+
+					video.src = vid;
+				}
+
+				scope.__updateItem(media.currentSrc);
+				defer.resolve();
+			};
+			req.onerror = function() {
+				scope.__updateItem(media.currentSrc);
+				defer.resolve();
+			};
+			req.send();
+
 			promise.push(defer);
 		});
 
