@@ -768,7 +768,9 @@ var mediaHandler = function (_handler) {
 				scope.__total++;
 
 				if (media.preload == 'none') {
-					media.load();
+					//media.load();
+					media.play();
+					media.pause();
 				}
 				media.oncanplay = function () {
 					scope.__updateItem(media.currentSrc);
@@ -1561,7 +1563,8 @@ var event = function (_base) {
 			var callback = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : function () {};
 			var url = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : testFile;
 
-			var startTime = new Date().getTime();
+			var startTime = new Date().getTime(),
+			    scope = this;
 
 			var xhr = $.ajax({
 				dataType: "text",
@@ -1575,15 +1578,17 @@ var event = function (_base) {
 					    kbps = (bps / 1024).toFixed(2),
 					    mbps = (kbps / 1024).toFixed(2);
 
-					//console.log(size);
-
-					callback({
-						"url": url,
-						"size": size,
-						"bps": bps,
-						"kbps": kbps,
-						"mbps": mbps
-					});
+					if (typeof callback == 'function') {
+						callback({
+							"url": url,
+							"size": size,
+							"bps": bps,
+							"kbps": kbps,
+							"mbps": mbps
+						});
+					} else {
+						scope.log("Boreas.network.bandwidthTest: callback не является функцией");
+					}
 				}
 			});
 		}

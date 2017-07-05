@@ -12,7 +12,8 @@ let testFile = '100kb';
 export default class event extends base {
 
 	static bandwidthTest (callback=()=>{}, url = testFile) {
-		let startTime = (new Date()).getTime();
+		let startTime = (new Date()).getTime(),
+			scope = this;
 
 		var xhr = $.ajax({
 			dataType: "text",
@@ -26,15 +27,17 @@ export default class event extends base {
 					kbps = (bps / 1024).toFixed(2),
 					mbps = (kbps / 1024).toFixed(2);
 
-				//console.log(size);
-
-				callback({
-					"url": url,
-					"size": size,
-					"bps": bps,
-					"kbps": kbps,
-					"mbps": mbps
-				});
+				if(typeof callback == 'function'){
+					callback({
+						"url": url,
+						"size": size,
+						"bps": bps,
+						"kbps": kbps,
+						"mbps": mbps
+					});
+				}else{
+					scope.log("Boreas.network.bandwidthTest: callback не является функцией");
+				}
 			}
 		});
 	}
