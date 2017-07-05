@@ -12,7 +12,7 @@ export default class mediaHandler extends handler {
 		super();
 		this.params = {
 			selector: 'audio, video',
-			blob: true,
+			blob: false,
 		};
 
 		this.__total = 0;
@@ -51,27 +51,34 @@ export default class mediaHandler extends handler {
 			promise = [];
 
 		$(this.params.selector).each(function(){
-			let media = this,
+			let source = this,
 				defer = new $.Deferred();
+
+			if(source.preload == 'none'){
+				return;
+
+				//source.load();
+				//source.preload = 'auto';
+			}
 
 			scope.__total++;
 
-			//alert(media.currentSrc);
+			let tagName = source.tagName.toLowerCase();
+			let media = document.createElement(tagName);
+			media.src = source.currentSrc;
 
-			if(media.preload == 'none'){
-				media.load();
-				//media.preload = 'auto';
-			}
-			media.oncanplay = () => {
-				scope.__updateItem(media.currentSrc);
+			media.addEventListener('canplaythrough', function(){
+				scope.__updateItem(source.currentSrc);
 				defer.resolve();
 				media.oncanplay = null;
-			};
-			media.onerror = () => {
-				scope.__updateItem(media.currentSrc);
+			}, false);
+
+			media.addEventListener('onerror', function(){
+				scope.__updateItem(source.currentSrc);
 				defer.resolve();
 				media.onerror = null;
-			};
+			}, false);
+
 			promise.push(defer);
 		});
 
@@ -104,7 +111,6 @@ export default class mediaHandler extends handler {
 					let mediaBlob = this.response;
 					let blobUrl = URL.createObjectURL(mediaBlob); // IE10+
 					media.src = blobUrl;
-
 				}
 
 				scope.__updateItem(media.currentSrc);

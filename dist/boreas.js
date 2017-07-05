@@ -715,7 +715,7 @@ var mediaHandler = function (_handler) {
 
 		_this.params = {
 			selector: 'audio, video',
-			blob: true
+			blob: false
 		};
 
 		_this.__total = 0;
@@ -765,27 +765,34 @@ var mediaHandler = function (_handler) {
 			    promise = [];
 
 			$(this.params.selector).each(function () {
-				var media = this,
+				var source = this,
 				    defer = new $.Deferred();
+
+				if (source.preload == 'none') {
+					return;
+
+					//source.load();
+					//source.preload = 'auto';
+				}
 
 				scope.__total++;
 
-				//alert(media.currentSrc);
+				var tagName = source.tagName.toLowerCase();
+				var media = document.createElement(tagName);
+				media.src = source.currentSrc;
 
-				if (media.preload == 'none') {
-					media.load();
-					//media.preload = 'auto';
-				}
-				media.oncanplay = function () {
-					scope.__updateItem(media.currentSrc);
+				media.addEventListener('canplaythrough', function () {
+					scope.__updateItem(source.currentSrc);
 					defer.resolve();
 					media.oncanplay = null;
-				};
-				media.onerror = function () {
-					scope.__updateItem(media.currentSrc);
+				}, false);
+
+				media.addEventListener('onerror', function () {
+					scope.__updateItem(source.currentSrc);
 					defer.resolve();
 					media.onerror = null;
-				};
+				}, false);
+
 				promise.push(defer);
 			});
 
