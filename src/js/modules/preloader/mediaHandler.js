@@ -53,13 +53,11 @@ export default class mediaHandler extends handler {
 		$(this.params.selector).each(function(){
 			let source = this,
 				defer = new $.Deferred();
-
+			/*
 			if(source.preload == 'none'){
-				return;
-
-				//source.load();
-				//source.preload = 'auto';
+				source.load();
 			}
+			*/
 
 			scope.__total++;
 

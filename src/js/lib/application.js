@@ -47,11 +47,17 @@ export default class application extends module {
 	 * Инициализация приложения
 	 * @param params Объект, содержащий параметры инициализации
 	 */
-	initialize () {
-		let _this = this;
+	initialize (container='body') {
+		let scope = this,
+			$container = null;  //  jQuery-объект
+		if(typeof container == 'string'){
+			$container = $(container);
+		}else{
+			$container = container;
+		}
 
-		this.__loadModules(this.params.modules, () => {
-			_this.trigger('ready');
+		this.__loadModules($container, this.params.modules, () => {
+			scope.trigger('ready');
 		})
 	}
 
@@ -62,6 +68,8 @@ export default class application extends module {
 	}
 
 	__includeModules (modules){
+		let scope = this;
+
 		for(let i in modules){
 			let moduleItem = $.extend({}, moduleDefaults);
 			if(typeof moduleItem == 'string'){
@@ -70,13 +78,16 @@ export default class application extends module {
 				moduleItem = $.extend(true, moduleItem, modules[i] );
 			}
 
-			if(typeof moduleItem.class != 'undefined'){
-				this[moduleItem.name] = new moduleItem.class();
-			}else{
-				let moduleClass = require('../modules/' + moduleItem.name).default;
-				this[moduleItem.name] = new moduleClass();
-			}
+			let moduleClass = (typeof moduleItem.class != 'undefined') ? moduleItem.class : require('../modules/' + moduleItem.name).default;
+			moduleClass.prototype.getApplicationInstance = function (){
+				return scope;
+			};
+			this[moduleItem.name] = new moduleClass();
 		}
+	}
+
+	__getApplicationInstance (scrope) {
+		return scropt
 	}
 
 	/**
@@ -89,8 +100,8 @@ export default class application extends module {
 	 * @param async Асинхронная или синхронная загрузка модуля
 	 * @private
 	 */
-	__loadModules (modules, callback=null, async=false) {
-		let _this = this,
+	__loadModules ($container=$('body'), modules, callback=null, async=false) {
+		let scope = this,
 			promise = (async===false)?null:[];
 
 		for(let i in modules){
@@ -102,27 +113,27 @@ export default class application extends module {
 			}
 
 			if(async !== moduleItem.async) continue;  //  Отсеиваем модули с другим типом загрузки
-			if(!_this.__isModuleEnabled(moduleItem)) continue; //  Отсеиваем отключённые модули
+			if(!scope.__isModuleEnabled($container, moduleItem)) continue; //  Отсеиваем отключённые модули
 
 			if(async===false){//  Синхронная загрузка модулей
 				if(promise === null){
-					promise = _this.__loadModule(moduleItem).promise();
+					promise = scope.__loadModule($container, moduleItem).promise();
 				}else{
 					promise.done(() => {
-						promise = _this.__loadModule(moduleItem).promise();
+						promise = scope.__loadModule($container, moduleItem).promise();
 					});
 				}
 			}else{//  Асинхронная загрузка модулей
-				promise.push(_this.__loadModule(moduleItem, true));
+				promise.push(scope.__loadModule($container, moduleItem, true));
 			}
 		}
 
 		if(async===false) {  //  Загружаем оставшиеся модули синхронно
 			if(promise === null){  //   Если синхронных не нашлось, то грузим всё асинхронно
-				this.__loadModules(modules, null, true).done(callback);
+				this.__loadModules($container, modules, null, true).done(callback);
 			}else{
 				promise.done(() => {
-					this.__loadModules(modules, null, true).done(callback);
+					this.__loadModules($container, modules, null, true).done(callback);
 				});
 			}
 		}else{//  Асинхронная загрузка модулей
@@ -130,16 +141,16 @@ export default class application extends module {
 		}
 	}
 
-	__isModuleEnabled (moduleItem){
-		let _this = this;
+	__isModuleEnabled ($container=$('body'), moduleItem){
+		let scope = this;
 
 		if(moduleItem.load === true){   // Модуль включён
 			return true;
 		}else if(moduleItem.load === 'auto'){   // Автоматический ражим загрузки модуля
 			let modules = [];
 
-			$('[data-'+this.params.modulesDataAttribute+']').each(function(){
-				let data = $(this).data(_this.params.modulesDataAttribute).split(" ");
+			$container.find('[data-'+this.params.modulesDataAttribute+']').each(function(){
+				let data = $(this).data(scope.params.modulesDataAttribute).split(" ");
 				modules = modules.concat(data);
 			});
 
@@ -157,14 +168,14 @@ export default class application extends module {
 	 * @returns {$.Deferred} Метод возвращает объект jQuery.Deferred или jQuery.Deferred's Promise в зависимости от типа загрузки
 	 * @private
 	 */
-	__loadModule (moduleItem) {
-		let _this = this,
+	__loadModule ($container=$('body'), moduleItem) {
+		let scope = this,
 			defer = new $.Deferred();
 
 		this[moduleItem.name].on('ready', function(){
 			defer.resolve();
 		});
-		this[moduleItem.name].initialize(moduleItem.params);
+		this[moduleItem.name].initialize(moduleItem.params, $container);
 		return defer;
 	}
 }

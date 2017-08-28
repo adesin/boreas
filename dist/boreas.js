@@ -132,6 +132,16 @@ var _module = function (_base) {
 		key: 'initialize',
 		value: function initialize() {
 			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+			var container = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'body';
+
+			var $container = null; //  jQuery-объект
+			if (typeof container == 'string') {
+				$container = $(container);
+			} else {
+				$container = container;
+			}
+
+			//  Далее инициализируем модуль внутри контейнера $container
 
 			this.trigger('ready');
 			//this.log(`Module "${this.constructor.name}" initialized`);
@@ -767,13 +777,11 @@ var mediaHandler = function (_handler) {
 			$(this.params.selector).each(function () {
 				var source = this,
 				    defer = new $.Deferred();
-
-				if (source.preload == 'none') {
-					return;
-
-					//source.load();
-					//source.preload = 'auto';
-				}
+				/*
+    if(source.preload == 'none'){
+    	source.load();
+    }
+    */
 
 				scope.__total++;
 
@@ -1354,9 +1362,9 @@ var application = function (_module) {
 
 		_classCallCheck(this, application);
 
-		var _this2 = _possibleConstructorReturn(this, (application.__proto__ || Object.getPrototypeOf(application)).call(this));
+		var _this = _possibleConstructorReturn(this, (application.__proto__ || Object.getPrototypeOf(application)).call(this));
 
-		_this2.params = {
+		_this.params = {
 			modules: [{
 				name: 'loader', // Имя модуля
 				load: true, // Загружать модуль. Возможные значения: true
@@ -1368,9 +1376,9 @@ var application = function (_module) {
 			}],
 			modulesDataAttribute: 'boreas-modules'
 		};
-		$.extend(true, _this2.params, params);
-		_this2.__includeModules(_this2.params.modules);
-		return _this2;
+		$.extend(true, _this.params, params);
+		_this.__includeModules(_this.params.modules);
+		return _this;
 	}
 
 	/**
@@ -1382,10 +1390,18 @@ var application = function (_module) {
 	_createClass(application, [{
 		key: 'initialize',
 		value: function initialize() {
-			var _this = this;
+			var container = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'body';
 
-			this.__loadModules(this.params.modules, function () {
-				_this.trigger('ready');
+			var scope = this,
+			    $container = null; //  jQuery-объект
+			if (typeof container == 'string') {
+				$container = $(container);
+			} else {
+				$container = container;
+			}
+
+			this.__loadModules($container, this.params.modules, function () {
+				scope.trigger('ready');
 			});
 		}
 	}, {
@@ -1398,6 +1414,8 @@ var application = function (_module) {
 	}, {
 		key: '__includeModules',
 		value: function __includeModules(modules) {
+			var scope = this;
+
 			for (var i in modules) {
 				var moduleItem = $.extend({}, moduleDefaults);
 				if (typeof moduleItem == 'string') {
@@ -1406,13 +1424,17 @@ var application = function (_module) {
 					moduleItem = $.extend(true, moduleItem, modules[i]);
 				}
 
-				if (typeof moduleItem.class != 'undefined') {
-					this[moduleItem.name] = new moduleItem.class();
-				} else {
-					var moduleClass = __webpack_require__(12)("./" + moduleItem.name).default;
-					this[moduleItem.name] = new moduleClass();
-				}
+				var moduleClass = typeof moduleItem.class != 'undefined' ? moduleItem.class : __webpack_require__(12)("./" + moduleItem.name).default;
+				moduleClass.prototype.getApplicationInstance = function () {
+					return scope;
+				};
+				this[moduleItem.name] = new moduleClass();
 			}
+		}
+	}, {
+		key: '__getApplicationInstance',
+		value: function __getApplicationInstance(scrope) {
+			return scropt;
 		}
 
 		/**
@@ -1428,13 +1450,16 @@ var application = function (_module) {
 
 	}, {
 		key: '__loadModules',
-		value: function __loadModules(modules) {
-			var _this3 = this;
+		value: function __loadModules() {
+			var $container = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : $('body');
+			var modules = arguments[1];
 
-			var callback = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-			var async = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+			var _this2 = this;
 
-			var _this = this,
+			var callback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+			var async = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+			var scope = this,
 			    promise = async === false ? null : [];
 
 			var _loop = function _loop(i) {
@@ -1446,20 +1471,20 @@ var application = function (_module) {
 				}
 
 				if (async !== moduleItem.async) return 'continue'; //  Отсеиваем модули с другим типом загрузки
-				if (!_this.__isModuleEnabled(moduleItem)) return 'continue'; //  Отсеиваем отключённые модули
+				if (!scope.__isModuleEnabled($container, moduleItem)) return 'continue'; //  Отсеиваем отключённые модули
 
 				if (async === false) {
 					//  Синхронная загрузка модулей
 					if (promise === null) {
-						promise = _this.__loadModule(moduleItem).promise();
+						promise = scope.__loadModule($container, moduleItem).promise();
 					} else {
 						promise.done(function () {
-							promise = _this.__loadModule(moduleItem).promise();
+							promise = scope.__loadModule($container, moduleItem).promise();
 						});
 					}
 				} else {
 					//  Асинхронная загрузка модулей
-					promise.push(_this.__loadModule(moduleItem, true));
+					promise.push(scope.__loadModule($container, moduleItem, true));
 				}
 			};
 
@@ -1473,10 +1498,10 @@ var application = function (_module) {
 				//  Загружаем оставшиеся модули синхронно
 				if (promise === null) {
 					//   Если синхронных не нашлось, то грузим всё асинхронно
-					this.__loadModules(modules, null, true).done(callback);
+					this.__loadModules($container, modules, null, true).done(callback);
 				} else {
 					promise.done(function () {
-						_this3.__loadModules(modules, null, true).done(callback);
+						_this2.__loadModules($container, modules, null, true).done(callback);
 					});
 				}
 			} else {
@@ -1486,8 +1511,11 @@ var application = function (_module) {
 		}
 	}, {
 		key: '__isModuleEnabled',
-		value: function __isModuleEnabled(moduleItem) {
-			var _this = this;
+		value: function __isModuleEnabled() {
+			var $container = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : $('body');
+			var moduleItem = arguments[1];
+
+			var scope = this;
 
 			if (moduleItem.load === true) {
 				// Модуль включён
@@ -1496,8 +1524,8 @@ var application = function (_module) {
 				// Автоматический ражим загрузки модуля
 				var modules = [];
 
-				$('[data-' + this.params.modulesDataAttribute + ']').each(function () {
-					var data = $(this).data(_this.params.modulesDataAttribute).split(" ");
+				$container.find('[data-' + this.params.modulesDataAttribute + ']').each(function () {
+					var data = $(this).data(scope.params.modulesDataAttribute).split(" ");
 					modules = modules.concat(data);
 				});
 
@@ -1518,14 +1546,17 @@ var application = function (_module) {
 
 	}, {
 		key: '__loadModule',
-		value: function __loadModule(moduleItem) {
-			var _this = this,
+		value: function __loadModule() {
+			var $container = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : $('body');
+			var moduleItem = arguments[1];
+
+			var scope = this,
 			    defer = new $.Deferred();
 
 			this[moduleItem.name].on('ready', function () {
 				defer.resolve();
 			});
-			this[moduleItem.name].initialize(moduleItem.params);
+			this[moduleItem.name].initialize(moduleItem.params, $container);
 			return defer;
 		}
 	}]);

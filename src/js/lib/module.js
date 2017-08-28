@@ -26,10 +26,21 @@ export default class module extends base {
 	 * Инициализация модуля
 	 * @param params Параметры
 	 */
-	initialize(params = {}){
+	initialize(params = {}, container='body'){
+		let $container = null;  //  jQuery-объект
+		if(typeof container == 'string'){
+			$container = $(container);
+		}else{
+			$container = container;
+		}
+
+		//  Далее инициализируем модуль внутри контейнера $container
+
 		this.trigger('ready');
 		//this.log(`Module "${this.constructor.name}" initialized`);
 	}
+
+
 
 	/**
 	 * Добавление обработчика события модуля
