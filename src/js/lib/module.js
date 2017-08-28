@@ -42,6 +42,11 @@ export default class module extends base {
 	}
 
 
+	someModuleMethod () {
+		let scope = this,
+			appInstance = scope.getApplicationInstance();
+	}
+
 
 	/**
 	 * Добавление обработчика события модуля

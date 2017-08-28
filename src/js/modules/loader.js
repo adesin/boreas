@@ -12,9 +12,14 @@
 
 import module from "../lib/module";
 
-let __isLoading = 0;
-
 export default class loader extends module {
+
+	constructor () {
+		super();
+		let scope = this;
+
+		scope.isLoading = 0;
+	}
 
 	/**
 	 *  Метод показывает или прячет загрузчик
@@ -32,8 +37,9 @@ export default class loader extends module {
 	 *  Метод показывает загрузчик или прибавляет счётчик
 	 */
 	show (){
-		__isLoading++;
-		if(__isLoading === 1){
+		let scope = this;
+		scope.isLoading++;
+		if(scope.isLoading === 1){
 			this.__showLoader();
 		}
 	}
@@ -42,10 +48,11 @@ export default class loader extends module {
 	 *  Метод скрывает загрузчик, или отнимает счётчик
 	 */
 	hide (){
-		if(__isLoading > 0){
-			__isLoading--;
+		let scope = this;
+		if(scope.isLoading > 0){
+			scope.isLoading--;
 		}
-		if(__isLoading === 0){
+		if(scope.isLoading === 0){
 			this.__hideLoader();
 		}
 	}
