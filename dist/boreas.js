@@ -124,7 +124,8 @@ var _module = function (_base) {
 
 	/**
   * Инициализация модуля
-  * @param params Параметры
+  * @param params - Параметры модуля
+  * @param container - HTML контейнер модуля, jQuery-объект или селектор
   */
 
 

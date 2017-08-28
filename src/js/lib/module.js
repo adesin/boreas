@@ -24,7 +24,8 @@ export default class module extends base {
 
 	/**
 	 * Инициализация модуля
-	 * @param params Параметры
+	 * @param params - Параметры модуля
+	 * @param container - HTML контейнер модуля, jQuery-объект или селектор
 	 */
 	initialize(params = {}, container='body'){
 		let $container = null;  //  jQuery-объект
