@@ -18,7 +18,6 @@ module.exports = {
 	},
 	watch: true,
 	devtool: 'source-map',
-
 	module: {
 		rules: [
 			{
@@ -33,7 +32,6 @@ module.exports = {
 			// Loaders for other file types can go here
 		],
 	},
-
 	plugins: [
 		new webpack.optimize.UglifyJsPlugin({
 			sourceMap: true,
