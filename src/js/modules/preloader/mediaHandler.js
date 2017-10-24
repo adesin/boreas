@@ -54,9 +54,9 @@ export default class mediaHandler extends handler {
 			let source = this,
 				defer = new $.Deferred();
 
-			if(source.preload == 'none'){
+			//if(source.preload == 'none'){
 				source.load();
-			}
+			//}
 			scope.__total++;
 
 			/*
@@ -65,18 +65,20 @@ export default class mediaHandler extends handler {
 			media.src = source.currentSrc;
 			media.load();
 			*/
-			//console.log('Starting load media: ' + source.currentSrc);
+			console.log('Starting load media: ' + source.currentSrc);
 
 			source.addEventListener('canplaythrough', function(){
 				scope.__updateItem(source.currentSrc);
 				defer.resolve();
 				//media.oncanplay = null;
-				//console.log('Media loaded: ' + source.currentSrc);
+				console.log('Media loaded: ' + source.currentSrc);
 			}, false);
 
 			source.addEventListener('onerror', function(){
 				scope.__updateItem(source.currentSrc);
 				defer.resolve();
+				console.log('Media error: ' + source.currentSrc);
+
 				//media.onerror = null;
 			}, false);
 

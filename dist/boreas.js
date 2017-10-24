@@ -922,10 +922,9 @@ var mediaHandler = function (_handler) {
 				var source = this,
 				    defer = new $.Deferred();
 
-				if (source.preload == 'none') {
-					source.load();
-				}
-
+				//if(source.preload == 'none'){
+				source.load();
+				//}
 				scope.__total++;
 
 				/*
@@ -934,18 +933,20 @@ var mediaHandler = function (_handler) {
     media.src = source.currentSrc;
     media.load();
     */
-				//console.log('Starting load media: ' + source.currentSrc);
+				console.log('Starting load media: ' + source.currentSrc);
 
 				source.addEventListener('canplaythrough', function () {
 					scope.__updateItem(source.currentSrc);
 					defer.resolve();
 					//media.oncanplay = null;
-					//console.log('Media loaded: ' + source.currentSrc);
+					console.log('Media loaded: ' + source.currentSrc);
 				}, false);
 
 				source.addEventListener('onerror', function () {
 					scope.__updateItem(source.currentSrc);
 					defer.resolve();
+					console.log('Media error: ' + source.currentSrc);
+
 					//media.onerror = null;
 				}, false);
 
