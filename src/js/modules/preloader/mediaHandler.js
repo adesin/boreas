@@ -57,7 +57,6 @@ export default class mediaHandler extends handler {
 			if(source.preload == 'none'){
 				source.load();
 			}
-
 			scope.__total++;
 
 			/*
