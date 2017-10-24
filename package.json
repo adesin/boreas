@@ -1,6 +1,6 @@
 {
   "name": "boreas",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Boreas - Application on JavaScript for our projects",
   "main": "webpack.config.js",
   "directories": {
