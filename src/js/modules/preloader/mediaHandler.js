@@ -53,28 +53,32 @@ export default class mediaHandler extends handler {
 		$(this.params.selector).each(function(){
 			let source = this,
 				defer = new $.Deferred();
-			/*
+
 			if(source.preload == 'none'){
 				source.load();
 			}
-			*/
 
 			scope.__total++;
 
+			/*
 			let tagName = source.tagName.toLowerCase();
 			let media = document.createElement(tagName);
 			media.src = source.currentSrc;
+			media.load();
+			*/
+			//console.log('Starting load media: ' + source.currentSrc);
 
-			media.addEventListener('canplaythrough', function(){
+			source.addEventListener('canplaythrough', function(){
 				scope.__updateItem(source.currentSrc);
 				defer.resolve();
-				media.oncanplay = null;
+				//media.oncanplay = null;
+				//console.log('Media loaded: ' + source.currentSrc);
 			}, false);
 
-			media.addEventListener('onerror', function(){
+			source.addEventListener('onerror', function(){
 				scope.__updateItem(source.currentSrc);
 				defer.resolve();
-				media.onerror = null;
+				//media.onerror = null;
 			}, false);
 
 			promise.push(defer);

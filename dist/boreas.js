@@ -921,28 +921,32 @@ var mediaHandler = function (_handler) {
 			$(this.params.selector).each(function () {
 				var source = this,
 				    defer = new $.Deferred();
-				/*
-    if(source.preload == 'none'){
-    	source.load();
-    }
-    */
+
+				if (source.preload == 'none') {
+					source.load();
+				}
 
 				scope.__total++;
 
-				var tagName = source.tagName.toLowerCase();
-				var media = document.createElement(tagName);
-				media.src = source.currentSrc;
+				/*
+    let tagName = source.tagName.toLowerCase();
+    let media = document.createElement(tagName);
+    media.src = source.currentSrc;
+    media.load();
+    */
+				//console.log('Starting load media: ' + source.currentSrc);
 
-				media.addEventListener('canplaythrough', function () {
+				source.addEventListener('canplaythrough', function () {
 					scope.__updateItem(source.currentSrc);
 					defer.resolve();
-					media.oncanplay = null;
+					//media.oncanplay = null;
+					//console.log('Media loaded: ' + source.currentSrc);
 				}, false);
 
-				media.addEventListener('onerror', function () {
+				source.addEventListener('onerror', function () {
 					scope.__updateItem(source.currentSrc);
 					defer.resolve();
-					media.onerror = null;
+					//media.onerror = null;
 				}, false);
 
 				promise.push(defer);
@@ -1078,7 +1082,7 @@ var preloader = function (_module) {
 				update: _this2.__updateBar,
 				hide: _this2.__hidePreloader
 			},
-			media: true, //  Обрабатывать HTML5 Media (<audio>  и <video>)
+			media: true, //  Обрабатывать HTML5 Media (<audio> и <video>)
 			delay: 800, //  Время ожидания перед скрытием прелодера
 			timeout: 30000, //  Максимальное время загрузки (на случай зависания)
 			watcher: false // Использовать watcher для анимации прелодера. int (ms) или false

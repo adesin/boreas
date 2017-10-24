@@ -23,7 +23,7 @@ export default class preloader extends module {
 				update: this.__updateBar,
 				hide: this.__hidePreloader,
 			},
-			media: true,    //  Обрабатывать HTML5 Media (<audio>  и <video>)
+			media: true,    //  Обрабатывать HTML5 Media (<audio> и <video>)
 			delay: 800,     //  Время ожидания перед скрытием прелодера
 			timeout: 30000, //  Максимальное время загрузки (на случай зависания)
 			watcher: false, // Использовать watcher для анимации прелодера. int (ms) или false
