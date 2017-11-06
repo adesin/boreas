@@ -665,6 +665,8 @@ var imagesHandler = function (_handler) {
 	}, {
 		key: "__findFonts",
 		value: function __findFonts(str) {
+			var path = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+
 			var match = void 0,
 			    subMatch = void 0;
 			while (match = this.params.regex.font.exec(str)) {

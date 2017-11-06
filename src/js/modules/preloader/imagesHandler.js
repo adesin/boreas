@@ -96,7 +96,7 @@ export default class imagesHandler extends handler {
 	 * @param str
 	 * @private
 	 */
-	__findFonts (str) {
+	__findFonts (str, path='') {
 		let match, subMatch;
 		while(match = this.params.regex.font.exec(str)) {
 			for (let i = match.length - 1; i >= 0; i--) {
