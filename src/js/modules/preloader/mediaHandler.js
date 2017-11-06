@@ -70,7 +70,8 @@ export default class mediaHandler extends handler {
 			source.addEventListener('canplay', function(){
 				scope.__updateItem(source.currentSrc);
 				defer.resolve();
-				media.oncanplay = null;
+
+				source.oncanplay = null;
 				console.log('Media loaded: ' + source.currentSrc);
 			}, false);
 
@@ -79,7 +80,7 @@ export default class mediaHandler extends handler {
 				defer.resolve();
 				console.log('Media error: ' + source.currentSrc);
 
-				media.onerror = null;
+				source.onerror = null;
 			}, false);
 
 			promise.push(defer);

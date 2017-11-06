@@ -944,7 +944,8 @@ var mediaHandler = function (_handler) {
 				source.addEventListener('canplay', function () {
 					scope.__updateItem(source.currentSrc);
 					defer.resolve();
-					media.oncanplay = null;
+
+					source.oncanplay = null;
 					console.log('Media loaded: ' + source.currentSrc);
 				}, false);
 
@@ -953,7 +954,7 @@ var mediaHandler = function (_handler) {
 					defer.resolve();
 					console.log('Media error: ' + source.currentSrc);
 
-					media.onerror = null;
+					source.onerror = null;
 				}, false);
 
 				promise.push(defer);
