@@ -600,7 +600,8 @@ var imagesHandler = function (_handler) {
 
 			//  Ищем ресурсы в области, селектора, переданного в параметрах
 			var str = $(this.params.selector).html();
-			this.__findSources(str);
+			var path = document.location.href.replace(/^(.*\/).*$/i, '$1');
+			this.__findSources(str, path);
 
 			//  Если в параметрах включена подгрузка CSS - то грузим их и обрабатываем
 			if (this.params.searchInCss === true && this.__found.css.length) {
@@ -631,13 +632,15 @@ var imagesHandler = function (_handler) {
 	}, {
 		key: "__findSources",
 		value: function __findSources(str) {
+			var path = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+
 			this.__findFonts(str); // Сначала ищем в нашей строке шрифты
 
 			var match = void 0;
 			while (match = this.params.regex.file.exec(str)) {
 				for (var i = match.length - 1; i >= 0; i--) {
 					if (typeof match[i] !== 'undefined') {
-						var url = match[i];
+						var url = path + match[i];
 						url = url.replace(this.params.regex.quote, ''); //  Убираем ковычки из URL
 						if (!url.length || url == '#' || url.indexOf('data:') !== -1) break; //  Отсекаем мусор
 						if (this.__found.font.indexOf(url) !== -1) break; // Отсекаем найденные шрифты
@@ -671,7 +674,7 @@ var imagesHandler = function (_handler) {
 						while (subMatch = this.params.regex.url.exec(subStr)) {
 							for (var _i = subMatch.length - 1; _i >= 0; _i--) {
 								if (typeof subMatch[_i] !== 'undefined') {
-									var url = subMatch[_i];
+									var url = path + subMatch[_i];
 									url = url.replace(this.params.regex.quote, ''); //  Убираем ковычки из URL
 									if (!url.length || url == '#' || url.indexOf('data:') !== -1) break; //  Отсекаем мусор
 
@@ -809,12 +812,13 @@ var imagesHandler = function (_handler) {
 		key: "__processUrlAsync",
 		value: function __processUrlAsync(url) {
 			var scope = this,
-			    defer = new $.Deferred();
+			    defer = new $.Deferred(),
+			    path = url.replace(/^(.*\/).*$/i, '$1');
 
 			$.ajax({
 				url: url
 			}).done(function (response) {
-				scope.__findSources(response);
+				scope.__findSources(response, path);
 				defer.resolve();
 			}).fail(function () {
 				defer.resolve();

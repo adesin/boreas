@@ -41,7 +41,8 @@ export default class imagesHandler extends handler {
 
 		//  Ищем ресурсы в области, селектора, переданного в параметрах
 		let str = $(this.params.selector).html();
-		this.__findSources(str);
+		let path = document.location.href.replace(/^(.*\/).*$/i, '$1');
+		this.__findSources(str, path);
 
 		//  Если в параметрах включена подгрузка CSS - то грузим их и обрабатываем
 		if(this.params.searchInCss === true && this.__found.css.length){
@@ -67,14 +68,14 @@ export default class imagesHandler extends handler {
 	 * @param str HTML или CSS
 	 * @private
 	 */
-	__findSources (str) {
+	__findSources (str, path='') {
 		this.__findFonts(str);  // Сначала ищем в нашей строке шрифты
 
 		let match;
 		while(match = this.params.regex.file.exec(str)){
 			for(let i = match.length - 1; i >= 0; i--){
 				if(typeof match[i] !== 'undefined'){
-					let url = match[i];
+					let url = path + match[i];
 					url = url.replace(this.params.regex.quote, ''); //  Убираем ковычки из URL
 					if(!url.length || url == '#' || url.indexOf('data:') !== -1) break; //  Отсекаем мусор
 					if(this.__found.font.indexOf(url) !== -1) break;   // Отсекаем найденные шрифты
@@ -104,7 +105,7 @@ export default class imagesHandler extends handler {
 					while(subMatch = this.params.regex.url.exec(subStr)) {
 						for (let i = subMatch.length - 1; i >= 0; i--) {
 							if (typeof subMatch[i] !== 'undefined') {
-								let url = subMatch[i];
+								let url = path + subMatch[i];
 								url = url.replace(this.params.regex.quote, ''); //  Убираем ковычки из URL
 								if(!url.length || url == '#' || url.indexOf('data:') !== -1) break; //  Отсекаем мусор
 
@@ -218,12 +219,13 @@ export default class imagesHandler extends handler {
 	 */
 	__processUrlAsync (url){
 		let scope = this,
-			defer = new $.Deferred();
+			defer = new $.Deferred(),
+			path = url.replace(/^(.*\/).*$/i, '$1');
 
 		$.ajax({
 			url: url
 		}).done((response) => {
-			scope.__findSources(response);
+			scope.__findSources(response, path);
 			defer.resolve();
 		}).fail(() => {
 			defer.resolve();
