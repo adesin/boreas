@@ -56,18 +56,19 @@ export default class mediaHandler extends handler {
 				defer = new $.Deferred();
 
 			//if(source.preload == 'none'){
-				//source.load();
+				source.load();
 			//}
 			scope.__total++;
 
+			/*
 			let tagName = source.tagName.toLowerCase();
 			let media = document.createElement(tagName);
 			media.src = source.currentSrc;
 			media.load();
-
+			*/
 			//console.log('Starting load media: ' + source.currentSrc);
 
-			media.addEventListener('canplaythrough', function(){
+			source.addEventListener('canplaythrough', function(){
 				if(processed.indexOf(source.currentSrc) !== -1) return;
 
 				processed.push(source.currentSrc);
@@ -77,7 +78,7 @@ export default class mediaHandler extends handler {
 				//console.log('Media loaded: ' + source.currentSrc);
 			}, false);
 
-			media.addEventListener('error', function(e){
+			source.addEventListener('error', function(e){
 				if(processed.indexOf(source.currentSrc) !== -1) return;
 
 				processed.push(source.currentSrc);
@@ -88,6 +89,18 @@ export default class mediaHandler extends handler {
 
 				//console.log('Media error: ' + source.currentSrc);
 			}, false);
+
+			//	Test handle events
+			let events = ['loadstart', 'progress', 'suspend', 'abort', 'emptied', 'stalled', 'loadedmetadata', 'loadeddata', 'canplay', 'playing', 'waiting', 'seeking', 'seeked', 'ended', 'durationchange', 'timeupdate', 'play, pause', 'ratechange', 'resize', 'volumechange'];
+			for(let k in events){
+				let eventName = events[k];
+
+				source.addEventListener(eventName, function(e){
+					console.log(eventName + ' handled: ' + source.currentSrc);
+					console.log(eventName);
+				});
+			}
+
 
 			promise.push(defer);
 		});
