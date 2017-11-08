@@ -23,10 +23,12 @@ export default class preloader extends module {
 				update: this.__updateBar,
 				hide: this.__hidePreloader,
 			},
+			css: true,		//	Обрабатывать файлы CSS
 			media: true,    //  Обрабатывать HTML5 Media (<audio> и <video>)
 			delay: 800,     //  Время ожидания перед скрытием прелодера
 			timeout: 30000, //  Максимальное время загрузки (на случай зависания)
 			watcher: false, // Использовать watcher для анимации прелодера. int (ms) или false
+
 		};
 		scope.__handlers = [];  // Массив обработчиков прелодера
 		scope.__status = {  // Текущий статус обработчика
@@ -47,7 +49,9 @@ export default class preloader extends module {
 		scope.params.methods.show();
 
 		//  Обработчики по-умолчанию
-		scope.addHandler('images', imagesHandler);
+		scope.addHandler('images', imagesHandler, {
+			searchInCss: scope.params.css
+		});
 		if(scope.params.media === true){
 			scope.addHandler('media', mediaHandler);
 		}

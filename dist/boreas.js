@@ -1090,10 +1090,12 @@ var preloader = function (_module) {
 				update: _this2.__updateBar,
 				hide: _this2.__hidePreloader
 			},
+			css: true, //	Обрабатывать файлы CSS
 			media: true, //  Обрабатывать HTML5 Media (<audio> и <video>)
 			delay: 800, //  Время ожидания перед скрытием прелодера
 			timeout: 30000, //  Максимальное время загрузки (на случай зависания)
 			watcher: false // Использовать watcher для анимации прелодера. int (ms) или false
+
 		};
 		scope.__handlers = []; // Массив обработчиков прелодера
 		scope.__status = { // Текущий статус обработчика
@@ -1119,7 +1121,9 @@ var preloader = function (_module) {
 			scope.params.methods.show();
 
 			//  Обработчики по-умолчанию
-			scope.addHandler('images', _imagesHandler2.default);
+			scope.addHandler('images', _imagesHandler2.default, {
+				searchInCss: scope.params.css
+			});
 			if (scope.params.media === true) {
 				scope.addHandler('media', _mediaHandler2.default);
 			}
