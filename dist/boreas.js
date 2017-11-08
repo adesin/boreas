@@ -929,32 +929,31 @@ var mediaHandler = function (_handler) {
 				    defer = new $.Deferred();
 
 				//if(source.preload == 'none'){
-				source.load();
+				//source.load();
 				//}
 				scope.__total++;
 
-				/*
-    let tagName = source.tagName.toLowerCase();
-    let media = document.createElement(tagName);
-    media.src = source.currentSrc;
-    media.load();
-    */
-				console.log('Starting load media: ' + source.currentSrc);
+				var tagName = source.tagName.toLowerCase();
+				var media = document.createElement(tagName);
+				media.src = source.currentSrc;
+				media.load();
 
-				source.addEventListener('canplay', function () {
+				//console.log('Starting load media: ' + source.currentSrc);
+
+				media.addEventListener('canplay', function () {
 					scope.__updateItem(source.currentSrc);
 					defer.resolve();
 
-					source.oncanplay = null;
-					console.log('Media loaded: ' + source.currentSrc);
+					media.oncanplay = null;
+					//console.log('Media loaded: ' + source.currentSrc);
 				}, false);
 
-				source.addEventListener('onerror', function () {
+				media.addEventListener('onerror', function () {
 					scope.__updateItem(source.currentSrc);
 					defer.resolve();
-					console.log('Media error: ' + source.currentSrc);
+					//console.log('Media error: ' + source.currentSrc);
 
-					source.onerror = null;
+					//media.onerror = null;
 				}, false);
 
 				promise.push(defer);
