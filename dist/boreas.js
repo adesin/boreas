@@ -600,8 +600,7 @@ var imagesHandler = function (_handler) {
 
 			//  Ищем ресурсы в области, селектора, переданного в параметрах
 			var str = $(this.params.selector).html();
-			var path = document.location.href.replace(/^(.*\/).*$/i, '$1');
-			this.__findSources(str, path);
+			this.__findSources(str);
 
 			//  Если в параметрах включена подгрузка CSS - то грузим их и обрабатываем
 			if (this.params.searchInCss === true && this.__found.css.length) {
@@ -640,7 +639,10 @@ var imagesHandler = function (_handler) {
 			while (match = this.params.regex.file.exec(str)) {
 				for (var i = match.length - 1; i >= 0; i--) {
 					if (typeof match[i] !== 'undefined') {
-						var url = path + match[i];
+						var url = match[i];
+						if (url.indexOf('//') === -1) {
+							url = path + url;
+						}
 						url = url.replace(this.params.regex.quote, ''); //  Убираем ковычки из URL
 						if (!url.length || url == '#' || url.indexOf('data:') !== -1) break; //  Отсекаем мусор
 						if (this.__found.font.indexOf(url) !== -1) break; // Отсекаем найденные шрифты
@@ -815,7 +817,11 @@ var imagesHandler = function (_handler) {
 		value: function __processUrlAsync(url) {
 			var scope = this,
 			    defer = new $.Deferred(),
-			    path = url.replace(/^(.*\/).*$/i, '$1');
+			    path = '';
+
+			if (url.indexOf('//') === -1) {
+				path = url.replace(/^(.*\/).*$/i, '$1');
+			}
 
 			$.ajax({
 				url: url
@@ -930,55 +936,49 @@ var mediaHandler = function (_handler) {
 				    defer = new $.Deferred();
 
 				//if(source.preload == 'none'){
-				source.load();
+				//source.load();
 				//}
 				scope.__total++;
 
-				/*
-    let tagName = source.tagName.toLowerCase();
-    let media = document.createElement(tagName);
-    media.src = source.currentSrc;
-    media.load();
-    */
+				var tagName = source.tagName.toLowerCase();
+				var media = document.createElement(tagName);
+				media.src = source.currentSrc;
+				media.load();
+
 				//console.log('Starting load media: ' + source.currentSrc);
 
-				source.addEventListener('canplaythrough', function () {
-					if (processed.indexOf(source.currentSrc) !== -1) return;
-
+				var resolveItem = function resolveItem() {
 					processed.push(source.currentSrc);
 					scope.__updateItem(source.currentSrc);
 					defer.resolve();
+				};
 
-					//console.log('Media loaded: ' + source.currentSrc);
+				media.addEventListener('canplaythrough', function () {
+					if (processed.indexOf(source.currentSrc) !== -1) return;
+
+					resolveItem();
 				}, false);
 
-				source.addEventListener('error', function (e) {
+				media.addEventListener('error', function (e) {
 					if (processed.indexOf(source.currentSrc) !== -1) return;
 
-					processed.push(source.currentSrc);
-					scope.__updateItem(source.currentSrc);
-					defer.resolve();
+					resolveItem();
 
 					console.log(e);
-
-					//console.log('Media error: ' + source.currentSrc);
 				}, false);
 
 				//	Test handle events
-				var events = ['loadstart', 'progress', 'suspend', 'abort', 'emptied', 'stalled', 'loadedmetadata', 'loadeddata', 'canplay', 'playing', 'waiting', 'seeking', 'seeked', 'ended', 'durationchange', 'timeupdate', 'play, pause', 'ratechange', 'resize', 'volumechange'];
-
-				var _loop = function _loop(k) {
-					var eventName = events[k];
-
-					source.addEventListener(eventName, function (e) {
-						console.log(eventName + ' handled: ' + source.currentSrc);
-						console.log(eventName);
-					});
-				};
-
-				for (var k in events) {
-					_loop(k);
-				}
+				/*let otherEvents = ['suspend', 'stalled'];
+    for(let k in otherEvents){
+    	let eventName = otherEvents[k];
+    		media.addEventListener(eventName, function(e){
+    		if(processed.indexOf(source.currentSrc) !== -1) return;
+    			resolveItem();
+    			let parts = source.currentSrc.split( '/' );
+    		console.log(eventName + ' handled: ' + parts[parts.length-1]);
+    		console.log(e);
+    	});
+    }*/
 
 				promise.push(defer);
 			});
@@ -1574,6 +1574,15 @@ var application = function (_module) {
 			} else if (moduleItem.load === 'auto') {
 				// Автоматический ражим загрузки модуля
 				var modules = [];
+
+				var containerData = $container.data(this.params.modulesDataAttribute);
+
+				if (containerData) {
+					var data = containerData.split(" ");
+					console.log(data);
+
+					modules = modules.concat(data);
+				}
 
 				$container.find('[data-' + this.params.modulesDataAttribute + ']').each(function () {
 					var data = $(this).data(scope.params.modulesDataAttribute).split(" ");

@@ -56,50 +56,55 @@ export default class mediaHandler extends handler {
 				defer = new $.Deferred();
 
 			//if(source.preload == 'none'){
-				source.load();
+				//source.load();
 			//}
 			scope.__total++;
 
-			/*
+
 			let tagName = source.tagName.toLowerCase();
 			let media = document.createElement(tagName);
 			media.src = source.currentSrc;
 			media.load();
-			*/
+
 			//console.log('Starting load media: ' + source.currentSrc);
 
-			source.addEventListener('canplaythrough', function(){
-				if(processed.indexOf(source.currentSrc) !== -1) return;
-
+			let resolveItem = () => {
 				processed.push(source.currentSrc);
 				scope.__updateItem(source.currentSrc);
 				defer.resolve();
+			};
 
-				//console.log('Media loaded: ' + source.currentSrc);
+			media.addEventListener('canplaythrough', function(){
+				if(processed.indexOf(source.currentSrc) !== -1) return;
+
+				resolveItem();
 			}, false);
 
-			source.addEventListener('error', function(e){
+			media.addEventListener('error', function(e){
 				if(processed.indexOf(source.currentSrc) !== -1) return;
 
-				processed.push(source.currentSrc);
-				scope.__updateItem(source.currentSrc);
-				defer.resolve();
+				resolveItem();
 
 				console.log(e);
-
-				//console.log('Media error: ' + source.currentSrc);
 			}, false);
 
 			//	Test handle events
-			let events = ['loadstart', 'progress', 'suspend', 'abort', 'emptied', 'stalled', 'loadedmetadata', 'loadeddata', 'canplay', 'playing', 'waiting', 'seeking', 'seeked', 'ended', 'durationchange', 'timeupdate', 'play, pause', 'ratechange', 'resize', 'volumechange'];
-			for(let k in events){
-				let eventName = events[k];
+			/*let otherEvents = ['suspend', 'stalled'];
+			for(let k in otherEvents){
+				let eventName = otherEvents[k];
 
-				source.addEventListener(eventName, function(e){
-					console.log(eventName + ' handled: ' + source.currentSrc);
-					console.log(eventName);
+				media.addEventListener(eventName, function(e){
+					if(processed.indexOf(source.currentSrc) !== -1) return;
+
+					resolveItem();
+
+					let parts = source.currentSrc.split( '/' );
+					console.log(eventName + ' handled: ' + parts[parts.length-1]);
+					console.log(e);
 				});
-			}
+			}*/
+
+
 
 
 			promise.push(defer);

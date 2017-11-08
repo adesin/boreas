@@ -41,8 +41,7 @@ export default class imagesHandler extends handler {
 
 		//  Ищем ресурсы в области, селектора, переданного в параметрах
 		let str = $(this.params.selector).html();
-		let path = document.location.href.replace(/^(.*\/).*$/i, '$1');
-		this.__findSources(str, path);
+		this.__findSources(str);
 
 		//  Если в параметрах включена подгрузка CSS - то грузим их и обрабатываем
 		if(this.params.searchInCss === true && this.__found.css.length){
@@ -75,7 +74,10 @@ export default class imagesHandler extends handler {
 		while(match = this.params.regex.file.exec(str)){
 			for(let i = match.length - 1; i >= 0; i--){
 				if(typeof match[i] !== 'undefined'){
-					let url = path + match[i];
+					let url = match[i];
+					if(url.indexOf('//') === -1){
+						url = path + url;
+					}
 					url = url.replace(this.params.regex.quote, ''); //  Убираем ковычки из URL
 					if(!url.length || url == '#' || url.indexOf('data:') !== -1) break; //  Отсекаем мусор
 					if(this.__found.font.indexOf(url) !== -1) break;   // Отсекаем найденные шрифты
@@ -220,7 +222,11 @@ export default class imagesHandler extends handler {
 	__processUrlAsync (url){
 		let scope = this,
 			defer = new $.Deferred(),
+			path = '';
+
+		if(url.indexOf('//') === -1){
 			path = url.replace(/^(.*\/).*$/i, '$1');
+		}
 
 		$.ajax({
 			url: url

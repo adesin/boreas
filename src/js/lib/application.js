@@ -149,10 +149,23 @@ export default class application extends module {
 		}else if(moduleItem.load === 'auto'){   // Автоматический ражим загрузки модуля
 			let modules = [];
 
+			let containerData = $container.data(this.params.modulesDataAttribute);
+
+
+
+			if(containerData){
+				let data = containerData.split(" ");
+				console.log(data);
+
+				modules = modules.concat(data);
+			}
+
 			$container.find('[data-'+this.params.modulesDataAttribute+']').each(function(){
 				let data = $(this).data(scope.params.modulesDataAttribute).split(" ");
 				modules = modules.concat(data);
 			});
+
+
 
 			if(modules.indexOf(moduleItem.name) !== -1){
 				return true;

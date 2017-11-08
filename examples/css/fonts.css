@@ -1,0 +1,83 @@
+@font-face {
+    font-family: 'AvenirNextCyr';
+    src: url('../fonts/AvenirNextCyrLight.eot');
+    src: url('../fonts/AvenirNextCyrLight.eot') format('embedded-opentype'),
+    url('../fonts/AvenirNextCyrLight.woff2') format('woff2'),
+    url('../fonts/AvenirNextCyrLight.woff') format('woff'),
+    url('../fonts/AvenirNextCyrLight.ttf') format('truetype'),
+    url('../fonts/AvenirNextCyrLight.svg#AvenirNextCyrLight') format('svg');
+    font-weight: 100;
+}
+
+@font-face {
+    font-family: 'AvenirNextCyr';
+    src: url('../fonts/AvenirNextCyrRegular.eot');
+    src: url('../fonts/AvenirNextCyrRegular.eot') format('embedded-opentype'),
+    url('../fonts/AvenirNextCyrRegular.woff2') format('woff2'),
+    url('../fonts/AvenirNextCyrRegular.woff') format('woff'),
+    url('../fonts/AvenirNextCyrRegular.ttf') format('truetype'),
+    url('../fonts/AvenirNextCyrRegular.svg#AvenirNextCyrRegular') format('svg');
+    font-weight: 400;
+}
+@font-face {
+    font-family: 'AvenirNextCyr';
+    src: url('../fonts/AvenirNextCyrDemi.eot');
+    src: url('../fonts/AvenirNextCyrDemi.eot') format('embedded-opentype'),
+    url('../fonts/AvenirNextCyrDemi.woff2') format('woff2'),
+    url('../fonts/AvenirNextCyrDemi.woff') format('woff'),
+    url('../fonts/AvenirNextCyrDemi.ttf') format('truetype'),
+    url('../fonts/AvenirNextCyrDemi.svg#AvenirNextCyrDemi') format('svg');
+    font-weight: 500;
+}
+@font-face {
+    font-family: 'AvenirNextCyr';
+    src: url('../fonts/AvenirNextCyrMedium.eot');
+    src: url('../fonts/AvenirNextCyrMedium.eot') format('embedded-opentype'),
+    url('../fonts/AvenirNextCyrMedium.woff2') format('woff2'),
+    url('../fonts/AvenirNextCyrMedium.woff') format('woff'),
+    url('../fonts/AvenirNextCyrMedium.ttf') format('truetype'),
+    url('../fonts/AvenirNextCyrMedium.svg#AvenirNextCyrMedium') format('svg');
+    font-weight: 600;
+}
+
+@font-face {
+    font-family: 'AvenirNextCyr';
+    src: url('../fonts/AvenirNextCyrBold.eot');
+    src: url('../fonts/AvenirNextCyrBold.eot') format('embedded-opentype'),
+    url('../fonts/AvenirNextCyrBold.woff2') format('woff2'),
+    url('../fonts/AvenirNextCyrBold.woff') format('woff'),
+    url('../fonts/AvenirNextCyrBold.ttf') format('truetype'),
+    url('../fonts/AvenirNextCyrBold.svg#AvenirNextCyrBold') format('svg');
+    font-weight: 700;
+}
+@font-face {
+    font-family: 'CharterITC';
+    src: url('../fonts/CharterITC.eot');
+    src: url('../fonts/CharterITC.eot') format('embedded-opentype'),
+    url('../fonts/CharterITC.woff2') format('woff2'),
+    url('../fonts/CharterITC.woff') format('woff'),
+    url('../fonts/CharterITC.ttf') format('truetype'),
+    url('../fonts/CharterITC.svg#CharterITC') format('svg');
+    font-weight: 400;
+}
+@font-face {
+    font-family: 'CharterITC';
+    src: url('../fonts/CharterITCItalic.eot');
+    src: url('../fonts/CharterITCItalic.eot') format('embedded-opentype'),
+    url('../fonts/CharterITCItalic.woff2') format('woff2'),
+    url('../fonts/CharterITCItalic.woff') format('woff'),
+    url('../fonts/CharterITCItalic.ttf') format('truetype'),
+    url('../fonts/CharterITCItalic.svg#CharterITCItalic') format('svg');
+    font-weight: 400;
+    font-style: italic;
+}
+@font-face {
+    font-family: 'Myriad Pro';
+    src: url('../fonts/MyriadPro-Regular.eot');
+    src: local('O'),
+    url('../fonts/MyriadPro-Regular.woff') format('woff'),
+    url('../fonts/MyriadPro-Regular.ttf') format('truetype'),
+    url('../fonts/MyriadPro-Regular.svg') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
