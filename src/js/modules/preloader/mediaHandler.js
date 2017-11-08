@@ -89,7 +89,7 @@ export default class mediaHandler extends handler {
 			}, false);
 
 			//	Test handle events
-			/*let otherEvents = ['suspend', 'stalled'];
+			let otherEvents = ['suspend'/*, 'stalled'*/];
 			for(let k in otherEvents){
 				let eventName = otherEvents[k];
 
@@ -102,11 +102,8 @@ export default class mediaHandler extends handler {
 					console.log(eventName + ' handled: ' + parts[parts.length-1]);
 					console.log(e);
 				});
-			}*/
-
-
-
-
+			}
+			
 			promise.push(defer);
 		});
 

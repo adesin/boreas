@@ -968,17 +968,25 @@ var mediaHandler = function (_handler) {
 				}, false);
 
 				//	Test handle events
-				/*let otherEvents = ['suspend', 'stalled'];
-    for(let k in otherEvents){
-    	let eventName = otherEvents[k];
-    		media.addEventListener(eventName, function(e){
-    		if(processed.indexOf(source.currentSrc) !== -1) return;
-    			resolveItem();
-    			let parts = source.currentSrc.split( '/' );
-    		console.log(eventName + ' handled: ' + parts[parts.length-1]);
-    		console.log(e);
-    	});
-    }*/
+				var otherEvents = ['suspend' /*, 'stalled'*/];
+
+				var _loop = function _loop(k) {
+					var eventName = otherEvents[k];
+
+					media.addEventListener(eventName, function (e) {
+						if (processed.indexOf(source.currentSrc) !== -1) return;
+
+						resolveItem();
+
+						var parts = source.currentSrc.split('/');
+						console.log(eventName + ' handled: ' + parts[parts.length - 1]);
+						console.log(e);
+					});
+				};
+
+				for (var k in otherEvents) {
+					_loop(k);
+				}
 
 				promise.push(defer);
 			});
