@@ -48,7 +48,8 @@ export default class mediaHandler extends handler {
 	 */
 	__loadMedia () {
 		let scope = this,
-			promise = [];
+			promise = [],
+			processed = [];
 
 		$(this.params.selector).each(function(){
 			let source = this,
@@ -59,7 +60,6 @@ export default class mediaHandler extends handler {
 			//}
 			scope.__total++;
 
-
 			let tagName = source.tagName.toLowerCase();
 			let media = document.createElement(tagName);
 			media.src = source.currentSrc;
@@ -68,14 +68,20 @@ export default class mediaHandler extends handler {
 			//console.log('Starting load media: ' + source.currentSrc);
 
 			media.addEventListener('canplay', function(){
+				if(processed.indexOf(source.currentSrc) !== -1) return;
+
+				processed.push(source.currentSrc);
 				scope.__updateItem(source.currentSrc);
 				defer.resolve();
 
-				media.oncanplay = null;
+				//media.oncanplay = null;
 				//console.log('Media loaded: ' + source.currentSrc);
 			}, false);
 
 			media.addEventListener('onerror', function(){
+				if(processed.indexOf(source.currentSrc) !== -1) return;
+
+				processed.push(source.currentSrc);
 				scope.__updateItem(source.currentSrc);
 				defer.resolve();
 				//console.log('Media error: ' + source.currentSrc);
