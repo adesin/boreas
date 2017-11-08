@@ -67,26 +67,26 @@ export default class mediaHandler extends handler {
 
 			//console.log('Starting load media: ' + source.currentSrc);
 
-			media.addEventListener('canplay', function(){
+			media.addEventListener('canplaythrough', function(){
 				if(processed.indexOf(source.currentSrc) !== -1) return;
 
 				processed.push(source.currentSrc);
 				scope.__updateItem(source.currentSrc);
 				defer.resolve();
 
-				//media.oncanplay = null;
 				//console.log('Media loaded: ' + source.currentSrc);
 			}, false);
 
-			media.addEventListener('onerror', function(){
+			media.addEventListener('error', function(e){
 				if(processed.indexOf(source.currentSrc) !== -1) return;
 
 				processed.push(source.currentSrc);
 				scope.__updateItem(source.currentSrc);
 				defer.resolve();
-				//console.log('Media error: ' + source.currentSrc);
 
-				//media.onerror = null;
+				console.log(e);
+
+				//console.log('Media error: ' + source.currentSrc);
 			}, false);
 
 			promise.push(defer);

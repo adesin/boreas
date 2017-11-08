@@ -922,7 +922,8 @@ var mediaHandler = function (_handler) {
 		key: '__loadMedia',
 		value: function __loadMedia() {
 			var scope = this,
-			    promise = [];
+			    promise = [],
+			    processed = [];
 
 			$(this.params.selector).each(function () {
 				var source = this,
@@ -940,20 +941,26 @@ var mediaHandler = function (_handler) {
 
 				//console.log('Starting load media: ' + source.currentSrc);
 
-				media.addEventListener('canplay', function () {
+				media.addEventListener('canplaythrough', function () {
+					if (processed.indexOf(source.currentSrc) !== -1) return;
+
+					processed.push(source.currentSrc);
 					scope.__updateItem(source.currentSrc);
 					defer.resolve();
 
-					media.oncanplay = null;
 					//console.log('Media loaded: ' + source.currentSrc);
 				}, false);
 
-				media.addEventListener('onerror', function () {
+				media.addEventListener('error', function (e) {
+					if (processed.indexOf(source.currentSrc) !== -1) return;
+
+					processed.push(source.currentSrc);
 					scope.__updateItem(source.currentSrc);
 					defer.resolve();
-					//console.log('Media error: ' + source.currentSrc);
 
-					//media.onerror = null;
+					console.log(e);
+
+					//console.log('Media error: ' + source.currentSrc);
 				}, false);
 
 				promise.push(defer);
