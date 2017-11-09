@@ -85,7 +85,10 @@ export default class mediaHandler extends handler {
 
 				resolveItem();
 
-				console.log(e);
+				let parts = source.currentSrc.split( '/' );
+				console.log(parts[parts.length-1] + ' file was resolved by event: error');
+
+				//console.log(e);
 			}, false);
 
 			//	Test handle events
@@ -99,11 +102,12 @@ export default class mediaHandler extends handler {
 					resolveItem();
 
 					let parts = source.currentSrc.split( '/' );
-					console.log(eventName + ' handled: ' + parts[parts.length-1]);
-					console.log(e);
+					console.log(parts[parts.length-1] + ' file was resolved by event: ' + eventName );
+					//console.log(eventName + ' handled: ' + parts[parts.length-1]);
+					//console.log(e);
 				});
 			}
-			
+
 			promise.push(defer);
 		});
 

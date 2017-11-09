@@ -964,7 +964,10 @@ var mediaHandler = function (_handler) {
 
 					resolveItem();
 
-					console.log(e);
+					var parts = source.currentSrc.split('/');
+					console.log(parts[parts.length - 1] + ' file was resolved by event: error');
+
+					//console.log(e);
 				}, false);
 
 				//	Test handle events
@@ -979,8 +982,9 @@ var mediaHandler = function (_handler) {
 						resolveItem();
 
 						var parts = source.currentSrc.split('/');
-						console.log(eventName + ' handled: ' + parts[parts.length - 1]);
-						console.log(e);
+						console.log(parts[parts.length - 1] + ' file was resolved by event: ' + eventName);
+						//console.log(eventName + ' handled: ' + parts[parts.length-1]);
+						//console.log(e);
 					});
 				};
 
