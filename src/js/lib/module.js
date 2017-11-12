@@ -41,12 +41,10 @@ export default class module extends base {
 		//this.log(`Module "${this.constructor.name}" initialized`);
 	}
 
-
 	someModuleMethod () {
 		let scope = this,
 			appInstance = scope.getApplicationInstance();
 	}
-
 
 	/**
 	 * Добавление обработчика события модуля

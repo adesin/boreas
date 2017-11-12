@@ -86,8 +86,14 @@ export default class application extends module {
 		}
 	}
 
-	__getApplicationInstance (scrope) {
-		return scropt
+	/**
+	 * exprerimental method not used (maybe)
+	 * @param scope
+	 * @returns {*}
+	 * @private
+	 */
+	__getApplicationInstance (scope) {
+		return scope;
 	}
 
 	/**

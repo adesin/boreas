@@ -1,15 +1,18 @@
 /**
  * Кастомный обработчик модуля Boreas.preloader
+ * Устарел ....
+ *
  */
 (function () {
 	'use strict';
 
 	//  Конструктор
 	window['customPreloaderHandler'] = function (arg) {
-		Boreas.preloaderHandler.call(this, arg);    // Вызов конструктора класса-родителя
+		var scope = this;
 
-		this.__total = 20;
-		this.__loaded = 0
+		Boreas.preloaderHandler.call(scope, arg);    // Вызов конструктора класса-родителя
+		scope.__total = 20;
+		scope.__loaded = 0
 	};
 	//  Наследование от родительского класса
 	Boreas.extend(customPreloaderHandler, Boreas.preloaderHandler);

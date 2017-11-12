@@ -6,6 +6,7 @@
  */
 
 import handler from "./handler";
+import handlerItem from "./handlerItem";
 
 export default class imagesHandler extends handler {
 	constructor () {
@@ -147,13 +148,15 @@ export default class imagesHandler extends handler {
 	 * @private
 	 */
 	__loadFiles () {
-		let promise = [];
+		//let promise = [];
 
 		if(typeof this.__found.image != 'undefined' && this.__found.image.length) {
 			for (let i in this.__found.image) {
-				this.__loadImageAsync(this.__found.image[i]).promise().done(() => {
+				this.__loadImageAsync(this.__found.image[i])
+
+				/*this.__loadImageAsync(this.__found.image[i]).promise().done(() => {
 					this.__updateStatus(this.__found.image[i]);
-				});
+				});*/
 			}
 		}
 	}
@@ -163,6 +166,7 @@ export default class imagesHandler extends handler {
 	 * @param src
 	 * @private
 	 */
+	/*
 	__updateStatus (src) {
 		if(!this.__loaded) {
 			this.__loaded = [];
@@ -176,7 +180,7 @@ export default class imagesHandler extends handler {
 		if(status.total == status.loaded){
 			this.trigger('ready');
 		}
-	}
+	}*/
 
 	/**
 	 * Метод загружает изображение в асинхронном режиме
@@ -185,17 +189,31 @@ export default class imagesHandler extends handler {
 	 * @private
 	 */
 	__loadImageAsync (url) {
-		let defer = new $.Deferred();
+		let scope = this,
+			defer = new $.Deferred(),
+			image = new Image();
 
-		let image = new Image();
 		image.src = url;
+		let item = new handlerItem(url, image);
+		scope.addItem(item);
+
+		image.addEventListener('load', function () {
+			defer.resolve();
+			item.trigger('ready');
+		});
+		image.addEventListener('error', function () {
+			defer.resolve();
+			item.addData("Unexpected error while loading image");
+			item.trigger('ready');
+		});
+		/*
 		image.onload = function () {
 			defer.resolve();
 		};
 		image.onerror = function () {
 			defer.resolve();
 		};
-
+		*/
 		return defer;
 	}
 

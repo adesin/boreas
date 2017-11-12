@@ -26,4 +26,7 @@ $(function() {
 	 * Инициализируем
 	 */
 	app.initialize();
+	app.preloader.on('progress', function(data){
+		console.log(data);
+	});
 });

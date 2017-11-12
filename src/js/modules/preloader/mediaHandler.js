@@ -6,6 +6,7 @@
  */
 
 import handler from "./handler";
+import handlerItem from "./handlerItem";
 
 export default class mediaHandler extends handler {
 	constructor () {
@@ -23,8 +24,10 @@ export default class mediaHandler extends handler {
 		let scope = this;
 		$.extend( true, this.params, params );
 
-		let loadMethod = (scope.params.blob)?'__loadMediaBlob':'__loadMedia';
-		this[loadMethod]().done(() => {
+		//let loadMethod = (scope.params.blob)?'__loadMediaBlob':'__loadMedia';
+		let loadMethod = '__loadMedia';
+
+		scope[loadMethod]().done(() => {
 			scope.trigger('ready');
 		});
 	}
@@ -61,17 +64,24 @@ export default class mediaHandler extends handler {
 			scope.__total++;
 
 
+
 			let tagName = source.tagName.toLowerCase();
 			let media = document.createElement(tagName);
 			media.src = source.currentSrc;
-			media.load();
 
+			let item = new handlerItem(media.src, media);
+			scope.addItem(item);
+
+			media.load();
+			
 			//console.log('Starting load media: ' + source.currentSrc);
 
 			let resolveItem = () => {
 				processed.push(source.currentSrc);
-				scope.__updateItem(source.currentSrc);
+				//scope.__updateItem(source.currentSrc);
+				item.trigger('ready');
 				defer.resolve();
+
 			};
 
 			media.addEventListener('canplaythrough', function(){
@@ -86,13 +96,12 @@ export default class mediaHandler extends handler {
 				resolveItem();
 
 				let parts = source.currentSrc.split( '/' );
-				console.log(parts[parts.length-1] + ' file was resolved by event: error');
-
+				item.addData(parts[parts.length-1] + ' file was resolved by event: error');
 				//console.log(e);
 			}, false);
 
 			//	Test handle events
-			let otherEvents = ['suspend'/*, 'stalled'*/];
+			let otherEvents = ['suspend', 'stalled'];
 			for(let k in otherEvents){
 				let eventName = otherEvents[k];
 
@@ -102,7 +111,8 @@ export default class mediaHandler extends handler {
 					resolveItem();
 
 					let parts = source.currentSrc.split( '/' );
-					console.log(parts[parts.length-1] + ' file was resolved by event: ' + eventName );
+					item.addData(parts[parts.length-1] + ' file was resolved by event: ' + eventName);
+
 					//console.log(eventName + ' handled: ' + parts[parts.length-1]);
 					//console.log(e);
 				});
@@ -121,6 +131,11 @@ export default class mediaHandler extends handler {
 		return $.when.apply(undefined, promise).promise();
 	}
 
+	/**
+	 *
+	 * @private
+	 */
+	//ToDo Необходимо доработать с использованием handlerItem
 	__loadMediaBlob () {
 		let scope = this,
 			promise = [];
@@ -168,10 +183,11 @@ export default class mediaHandler extends handler {
 	 * Говорим что был загружен один элемент
 	 * @private
 	 */
-	__updateItem (src){
+	//ToDo Метод устарел
+	/*__updateItem (src){
 		this.__loaded++;
 		let status = this.getStatus();
 		status.src = src;
 		this.trigger('progress', status);
-	}
+	}*/
 }

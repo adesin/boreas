@@ -64,7 +64,7 @@ var Boreas =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 11);
+/******/ 	return __webpack_require__(__webpack_require__.s = 12);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -82,11 +82,11 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _base2 = __webpack_require__(3);
+var _base2 = __webpack_require__(4);
 
 var _base3 = _interopRequireDefault(_base2);
 
-var _event = __webpack_require__(10);
+var _event = __webpack_require__(11);
 
 var _event2 = _interopRequireDefault(_event);
 
@@ -281,6 +281,10 @@ var _module3 = __webpack_require__(0);
 
 var _module4 = _interopRequireDefault(_module3);
 
+var _handlerItem = __webpack_require__(2);
+
+var _handlerItem2 = _interopRequireDefault(_handlerItem);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -314,24 +318,67 @@ var handler = function (_module) {
 
 		var _this = _possibleConstructorReturn(this, (handler.__proto__ || Object.getPrototypeOf(handler)).call(this));
 
-		_this.__registerEvents(['progress']);
-		_this.params = {};
+		var scope = _this;
+		scope.__registerEvents(['progress']);
+		scope.items = [];
+		scope.params = {};
 		return _this;
 	}
 
 	_createClass(handler, [{
-		key: 'initialize',
+		key: "initialize",
 		value: function initialize() {
 			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-			$.extend(true, this.params, params);
+			var scope = this;
+			$.extend(true, scope.params, params);
 
-			this.trigger('progress', this.getStatus());
-			this.trigger('ready');
+			scope.items.push(new _handlerItem2.default('Some Item'));
+			for (var k in items) {
+				items[k].trigger('ready');
+			}
+
+			scope.trigger('progress', scope.getStatus());
+			scope.trigger('ready');
+		}
+
+		/**
+   *
+   * @param item instance of handlerItem
+   */
+
+	}, {
+		key: "addItem",
+		value: function addItem(item) {
+			var scope = this;
+
+			var appInstance = scope.getApplicationInstance();
+			appInstance.preloader.__items.push(item);
+
+			console.log('adding handler item ' + item.name);
+
+			item.on('ready', function () {
+				console.log('loaded handler item ' + item.name);
+
+				var processed = 0;
+				for (var k in appInstance.preloader.__items) {
+					if (appInstance.preloader.__items[k].processed === true) {
+						processed++;
+					}
+				}
+
+				appInstance.preloader.trigger('progress', {
+					total: appInstance.preloader.__items.length,
+					processed: processed,
+					item: item
+				});
+			});
 		}
 	}, {
-		key: 'getStatus',
+		key: "getStatus",
 		value: function getStatus() {
+			var scope = this;
+
 			return {
 				total: 0,
 				loaded: 0,
@@ -347,6 +394,105 @@ exports.default = handler;
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _module3 = __webpack_require__(0);
+
+var _module4 = _interopRequireDefault(_module3);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author Anton Desin <anton.desin@gmail.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @link http://pirogov.ru/ Бюро Пирогова
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Date: 11.11.2017
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Time: 21:22
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+var handlerItem = function (_module) {
+	_inherits(handlerItem, _module);
+
+	/**
+  *
+  * @param name Имя элементв
+  * @param $element Загружаемый элемент
+  */
+	function handlerItem(name) {
+		var element = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+
+		_classCallCheck(this, handlerItem);
+
+		var _this = _possibleConstructorReturn(this, (handlerItem.__proto__ || Object.getPrototypeOf(handlerItem)).call(this));
+
+		var scope = _this;
+		scope.name = name;
+		scope.element = element;
+		scope.processed = false;
+		scope.timeStart = null;
+		scope.timeFinish = null;
+		scope.timeFinish = null;
+		scope.data = [];
+		scope.initialize();
+		return _this;
+	}
+
+	_createClass(handlerItem, [{
+		key: "initialize",
+		value: function initialize() {
+			var scope = this;
+
+			scope.timeStart = new Date();
+			scope.on('ready', function (params) {
+				scope.processed = true;
+				scope.timeFinish = new Date();
+			});
+		}
+	}, {
+		key: "addData",
+		value: function addData(data) {
+			var scope = this;
+			scope.data.push(data);
+		}
+
+		/**
+   * Получить время загрузки файла в милисекундах с начала загрузки до текущего момента, либо до момента завершения загрузки файла
+   */
+
+	}, {
+		key: "getTime",
+		value: function getTime() {
+			var scope = this,
+			    time = null;
+
+			if (scope.processed === true) {
+				time = scope.timeFinish.getTime() - scope.timeStart.getTime();
+			} else {
+				var now = new Date();
+				time = now.getTime() - scope.timeStart.getTime();
+			}
+		}
+	}]);
+
+	return handlerItem;
+}(_module4.default);
+
+exports.default = handlerItem;
+
+/***/ }),
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -483,7 +629,7 @@ var loader = function (_module) {
 exports.default = loader;
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -526,7 +672,7 @@ var base = function () {
 exports.default = base;
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -541,6 +687,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _handler2 = __webpack_require__(1);
 
 var _handler3 = _interopRequireDefault(_handler2);
+
+var _handlerItem = __webpack_require__(2);
+
+var _handlerItem2 = _interopRequireDefault(_handlerItem);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -724,19 +874,15 @@ var imagesHandler = function (_handler) {
 	}, {
 		key: "__loadFiles",
 		value: function __loadFiles() {
-			var _this3 = this;
-
-			var promise = [];
+			//let promise = [];
 
 			if (typeof this.__found.image != 'undefined' && this.__found.image.length) {
-				var _loop = function _loop(i) {
-					_this3.__loadImageAsync(_this3.__found.image[i]).promise().done(function () {
-						_this3.__updateStatus(_this3.__found.image[i]);
-					});
-				};
-
 				for (var i in this.__found.image) {
-					_loop(i);
+					this.__loadImageAsync(this.__found.image[i]);
+
+					/*this.__loadImageAsync(this.__found.image[i]).promise().done(() => {
+     	this.__updateStatus(this.__found.image[i]);
+     });*/
 				}
 			}
 		}
@@ -746,23 +892,19 @@ var imagesHandler = function (_handler) {
    * @param src
    * @private
    */
-
-	}, {
-		key: "__updateStatus",
-		value: function __updateStatus(src) {
-			if (!this.__loaded) {
-				this.__loaded = [];
-			}
-			this.__loaded.push(src);
-
-			var status = this.getStatus();
-			status.src = src;
-			this.trigger('progress', status);
-
-			if (status.total == status.loaded) {
-				this.trigger('ready');
-			}
-		}
+		/*
+  __updateStatus (src) {
+  	if(!this.__loaded) {
+  		this.__loaded = [];
+  	}
+  	this.__loaded.push(src);
+  		let status = this.getStatus();
+  	status.src = src;
+  	this.trigger('progress', status);
+  		if(status.total == status.loaded){
+  		this.trigger('ready');
+  	}
+  }*/
 
 		/**
    * Метод загружает изображение в асинхронном режиме
@@ -774,17 +916,31 @@ var imagesHandler = function (_handler) {
 	}, {
 		key: "__loadImageAsync",
 		value: function __loadImageAsync(url) {
-			var defer = new $.Deferred();
+			var scope = this,
+			    defer = new $.Deferred(),
+			    image = new Image();
 
-			var image = new Image();
 			image.src = url;
-			image.onload = function () {
-				defer.resolve();
-			};
-			image.onerror = function () {
-				defer.resolve();
-			};
+			var item = new _handlerItem2.default(url, image);
+			scope.addItem(item);
 
+			image.addEventListener('load', function () {
+				defer.resolve();
+				item.trigger('ready');
+			});
+			image.addEventListener('error', function () {
+				defer.resolve();
+				item.addData("Unexpected error while loading image");
+				item.trigger('ready');
+			});
+			/*
+   image.onload = function () {
+   	defer.resolve();
+   };
+   image.onerror = function () {
+   	defer.resolve();
+   };
+   */
 			return defer;
 		}
 
@@ -842,7 +998,7 @@ var imagesHandler = function (_handler) {
 exports.default = imagesHandler;
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -857,6 +1013,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _handler2 = __webpack_require__(1);
 
 var _handler3 = _interopRequireDefault(_handler2);
+
+var _handlerItem = __webpack_require__(2);
+
+var _handlerItem2 = _interopRequireDefault(_handlerItem);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -890,15 +1050,17 @@ var mediaHandler = function (_handler) {
 	}
 
 	_createClass(mediaHandler, [{
-		key: 'initialize',
+		key: "initialize",
 		value: function initialize() {
 			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
 			var scope = this;
 			$.extend(true, this.params, params);
 
-			var loadMethod = scope.params.blob ? '__loadMediaBlob' : '__loadMedia';
-			this[loadMethod]().done(function () {
+			//let loadMethod = (scope.params.blob)?'__loadMediaBlob':'__loadMedia';
+			var loadMethod = '__loadMedia';
+
+			scope[loadMethod]().done(function () {
 				scope.trigger('ready');
 			});
 		}
@@ -909,7 +1071,7 @@ var mediaHandler = function (_handler) {
    */
 
 	}, {
-		key: 'getStatus',
+		key: "getStatus",
 		value: function getStatus() {
 			return {
 				total: this.__total,
@@ -925,7 +1087,7 @@ var mediaHandler = function (_handler) {
    */
 
 	}, {
-		key: '__loadMedia',
+		key: "__loadMedia",
 		value: function __loadMedia() {
 			var scope = this,
 			    promise = [],
@@ -943,13 +1105,18 @@ var mediaHandler = function (_handler) {
 				var tagName = source.tagName.toLowerCase();
 				var media = document.createElement(tagName);
 				media.src = source.currentSrc;
+
+				var item = new _handlerItem2.default(media.src, media);
+				scope.addItem(item);
+
 				media.load();
 
 				//console.log('Starting load media: ' + source.currentSrc);
 
 				var resolveItem = function resolveItem() {
 					processed.push(source.currentSrc);
-					scope.__updateItem(source.currentSrc);
+					//scope.__updateItem(source.currentSrc);
+					item.trigger('ready');
 					defer.resolve();
 				};
 
@@ -965,13 +1132,12 @@ var mediaHandler = function (_handler) {
 					resolveItem();
 
 					var parts = source.currentSrc.split('/');
-					console.log(parts[parts.length - 1] + ' file was resolved by event: error');
-
+					item.addData(parts[parts.length - 1] + ' file was resolved by event: error');
 					//console.log(e);
 				}, false);
 
 				//	Test handle events
-				var otherEvents = ['suspend' /*, 'stalled'*/];
+				var otherEvents = ['suspend', 'stalled'];
 
 				var _loop = function _loop(k) {
 					var eventName = otherEvents[k];
@@ -982,7 +1148,8 @@ var mediaHandler = function (_handler) {
 						resolveItem();
 
 						var parts = source.currentSrc.split('/');
-						console.log(parts[parts.length - 1] + ' file was resolved by event: ' + eventName);
+						item.addData(parts[parts.length - 1] + ' file was resolved by event: ' + eventName);
+
 						//console.log(eventName + ' handled: ' + parts[parts.length-1]);
 						//console.log(e);
 					});
@@ -1004,8 +1171,15 @@ var mediaHandler = function (_handler) {
 
 			return $.when.apply(undefined, promise).promise();
 		}
+
+		/**
+   *
+   * @private
+   */
+		//ToDo Необходимо доработать с использованием handlerItem
+
 	}, {
-		key: '__loadMediaBlob',
+		key: "__loadMediaBlob",
 		value: function __loadMediaBlob() {
 			var scope = this,
 			    promise = [];
@@ -1053,15 +1227,14 @@ var mediaHandler = function (_handler) {
    * Говорим что был загружен один элемент
    * @private
    */
+		//ToDo Метод устарел
+		/*__updateItem (src){
+  	this.__loaded++;
+  	let status = this.getStatus();
+  	status.src = src;
+  	this.trigger('progress', status);
+  }*/
 
-	}, {
-		key: '__updateItem',
-		value: function __updateItem(src) {
-			this.__loaded++;
-			var status = this.getStatus();
-			status.src = src;
-			this.trigger('progress', status);
-		}
 	}]);
 
 	return mediaHandler;
@@ -1070,7 +1243,7 @@ var mediaHandler = function (_handler) {
 exports.default = mediaHandler;
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1086,11 +1259,11 @@ var _module3 = __webpack_require__(0);
 
 var _module4 = _interopRequireDefault(_module3);
 
-var _imagesHandler = __webpack_require__(4);
+var _imagesHandler = __webpack_require__(5);
 
 var _imagesHandler2 = _interopRequireDefault(_imagesHandler);
 
-var _mediaHandler = __webpack_require__(5);
+var _mediaHandler = __webpack_require__(6);
 
 var _mediaHandler2 = _interopRequireDefault(_mediaHandler);
 
@@ -1113,17 +1286,17 @@ var preloader = function (_module) {
 	function preloader() {
 		_classCallCheck(this, preloader);
 
-		var _this2 = _possibleConstructorReturn(this, (preloader.__proto__ || Object.getPrototypeOf(preloader)).call(this));
+		var _this = _possibleConstructorReturn(this, (preloader.__proto__ || Object.getPrototypeOf(preloader)).call(this));
 
-		var scope = _this2;
+		var scope = _this;
 
 		scope.__registerEvents(['progress']);
 		scope.params = {
 			handlers: [], //  Дополнительные обработчики
 			methods: { //  Методы для работы с представлениям, для переопределения
-				show: _this2.__showPreloader,
-				update: _this2.__updateBar,
-				hide: _this2.__hidePreloader
+				show: _this.__showPreloader,
+				update: _this.__updateBar,
+				hide: _this.__hidePreloader
 			},
 			css: true, //	Обрабатывать файлы CSS
 			media: true, //  Обрабатывать HTML5 Media (<audio> и <video>)
@@ -1133,16 +1306,18 @@ var preloader = function (_module) {
 
 		};
 		scope.__handlers = []; // Массив обработчиков прелодера
+		scope.__items = [];
+
 		scope.__status = { // Текущий статус обработчика
 			total: 0, // Общее число элементов
-			loaded: 0, // Число загруженных элементов
+			processed: 0, // Число загруженных элементов
 			src: null, // URL последнего загруженного элементв (если есть)
 			desc: null // Описание последнего загруженного элементв (если есть)
 		};
 		scope.__$preloader = null; // jQuery-объект прелодера
 		scope.__watcherTt = null; // Timeout AnimationWatcher'а
 		scope.__ready = false; // Готовность прелодера. Используется для взаимодействия с методом __forceFinish()
-		return _this2;
+		return _this;
 	}
 
 	_createClass(preloader, [{
@@ -1193,7 +1368,8 @@ var preloader = function (_module) {
 					// На случае если не используется __animationWatcher()
 					scope.params.methods.update(status);
 				}
-				if (status.loaded == status.total) {
+
+				if (status.processed == status.total) {
 					setTimeout(function () {
 						if (scope.__ready === false) {
 							scope.trigger('ready');
@@ -1257,7 +1433,7 @@ var preloader = function (_module) {
 				scope.__watcherTt = setInterval(function () {
 					if (value < scope.__status.loaded) {
 						scope.params.methods.update(scope.__status);
-						value = scope.__status.loaded;
+						value = scope.__status.processed;
 					}
 				}, scope.params.watcher);
 			}
@@ -1292,7 +1468,7 @@ var preloader = function (_module) {
 		value: function __updateBar() {
 			var status = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
 
-			var percent = parseInt(100 / status.total * status.loaded);
+			var percent = parseInt(100 / status.total * status.processed);
 
 			this.__$preloader.find('.progress-bar').css({ width: percent + '%' }).attr('aria-valuenow', percent);
 		}
@@ -1320,7 +1496,7 @@ var preloader = function (_module) {
 		key: "__forceFinish",
 		value: function __forceFinish() {
 			var status = this.__status;
-			status.loaded = status.total;
+			status.processed = status.total;
 			this.params.methods.update(status);
 			this.trigger('ready');
 		}
@@ -1333,16 +1509,24 @@ var preloader = function (_module) {
 	}, {
 		key: "__initHandlers",
 		value: function __initHandlers() {
-			var _this = this;
+			var _this2 = this;
 
-			for (var i in this.__handlers) {
-				this.__handlers[i].instance = new this.__handlers[i].class();
-				this.__handlers[i].instance.on('progress', function (status) {
-					_this.__updateStatus(status);
-					_this.trigger('progress', _this.__status);
+			var scope = this;
+
+			var _loop = function _loop(i) {
+				_this2.__handlers[i].class.prototype.getApplicationInstance = scope.getApplicationInstance;
+				_this2.__handlers[i].instance = new _this2.__handlers[i].class();
+				_this2.__handlers[i].instance.on('progress', function (status) {
+					status.handler = _this2.__handlers[i].name;
+					scope.__updateStatus(status);
+					scope.trigger('progress', scope.__status);
 				});
 
-				this.__handlers[i].instance.initialize(this.__handlers[i].params);
+				_this2.__handlers[i].instance.initialize(_this2.__handlers[i].params);
+			};
+
+			for (var i in this.__handlers) {
+				_loop(i);
 			}
 		}
 
@@ -1360,14 +1544,15 @@ var preloader = function (_module) {
 			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
 			this.__status.total = 0;
-			this.__status.loaded = 0;
+			this.__status.processed = 0;
+			this.__status.handler = typeof params.handler != 'undefined' ? params.handler : null;
 			this.__status.src = typeof params.src != 'undefined' ? params.src : null;
 			this.__status.desc = typeof params.desc != 'undefined' ? params.desc : null;
 
 			for (var i in this.__handlers) {
 				var handlerStatus = this.__handlers[i].instance.getStatus();
 				this.__status.total += handlerStatus.total;
-				this.__status.loaded += handlerStatus.loaded;
+				this.__status.processed += handlerStatus.processed;
 			}
 		}
 	}]);
@@ -1378,7 +1563,7 @@ var preloader = function (_module) {
 exports.default = preloader;
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1487,17 +1672,25 @@ var application = function (_module) {
 					moduleItem = $.extend(true, moduleItem, modules[i]);
 				}
 
-				var moduleClass = typeof moduleItem.class != 'undefined' ? moduleItem.class : __webpack_require__(12)("./" + moduleItem.name).default;
+				var moduleClass = typeof moduleItem.class != 'undefined' ? moduleItem.class : __webpack_require__(13)("./" + moduleItem.name).default;
 				moduleClass.prototype.getApplicationInstance = function () {
 					return scope;
 				};
 				this[moduleItem.name] = new moduleClass();
 			}
 		}
+
+		/**
+   * exprerimental method not used (maybe)
+   * @param scope
+   * @returns {*}
+   * @private
+   */
+
 	}, {
 		key: '__getApplicationInstance',
-		value: function __getApplicationInstance(scrope) {
-			return scropt;
+		value: function __getApplicationInstance(scope) {
+			return scope;
 		}
 
 		/**
@@ -1639,7 +1832,7 @@ var application = function (_module) {
 exports.default = application;
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1675,7 +1868,7 @@ function extend(subClass, superClass) {
 }
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1687,7 +1880,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _base2 = __webpack_require__(3);
+var _base2 = __webpack_require__(4);
 
 var _base3 = _interopRequireDefault(_base2);
 
@@ -1758,7 +1951,7 @@ var event = function (_base) {
 exports.default = event;
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1772,7 +1965,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _base2 = __webpack_require__(3);
+var _base2 = __webpack_require__(4);
 
 var _base3 = _interopRequireDefault(_base2);
 
@@ -1883,7 +2076,7 @@ var event = function (_base) {
 exports.default = event;
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1894,7 +2087,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.loader = exports.network = exports.preloaderHandler = exports.extend = exports.module = exports.application = undefined;
 
-var _application = __webpack_require__(7);
+var _application = __webpack_require__(8);
 
 var _application2 = _interopRequireDefault(_application);
 
@@ -1906,15 +2099,15 @@ var _handler = __webpack_require__(1);
 
 var _handler2 = _interopRequireDefault(_handler);
 
-var _extend = __webpack_require__(8);
+var _extend = __webpack_require__(9);
 
 var _extend2 = _interopRequireDefault(_extend);
 
-var _network = __webpack_require__(9);
+var _network = __webpack_require__(10);
 
 var _network2 = _interopRequireDefault(_network);
 
-var _loader = __webpack_require__(2);
+var _loader = __webpack_require__(3);
 
 var _loader2 = _interopRequireDefault(_loader);
 
@@ -1935,20 +2128,22 @@ exports.network = _network2.default;
 exports.loader = _loader2.default;
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./loader": 2,
-	"./loader.js": 2,
-	"./preloader": 6,
-	"./preloader.js": 6,
+	"./loader": 3,
+	"./loader.js": 3,
+	"./preloader": 7,
+	"./preloader.js": 7,
 	"./preloader/handler": 1,
 	"./preloader/handler.js": 1,
-	"./preloader/imagesHandler": 4,
-	"./preloader/imagesHandler.js": 4,
-	"./preloader/mediaHandler": 5,
-	"./preloader/mediaHandler.js": 5
+	"./preloader/handlerItem": 2,
+	"./preloader/handlerItem.js": 2,
+	"./preloader/imagesHandler": 5,
+	"./preloader/imagesHandler.js": 5,
+	"./preloader/mediaHandler": 6,
+	"./preloader/mediaHandler.js": 6
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -1964,7 +2159,7 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 12;
+webpackContext.id = 13;
 
 /***/ })
 /******/ ]);

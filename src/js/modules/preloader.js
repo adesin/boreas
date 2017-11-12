@@ -31,9 +31,11 @@ export default class preloader extends module {
 
 		};
 		scope.__handlers = [];  // Массив обработчиков прелодера
+		scope.__items = [];
+
 		scope.__status = {  // Текущий статус обработчика
 			total: 0,       // Общее число элементов
-			loaded: 0,      // Число загруженных элементов
+			processed: 0,      // Число загруженных элементов
 			src: null,      // URL последнего загруженного элементв (если есть)
 			desc: null,     // Описание последнего загруженного элементв (если есть)
 		};
@@ -85,7 +87,8 @@ export default class preloader extends module {
 			if(scope.__watcherTt === null){ // На случае если не используется __animationWatcher()
 				scope.params.methods.update(status);
 			}
-			if(status.loaded == status.total){
+
+			if(status.processed == status.total){
 				setTimeout(function(){
 					if(scope.__ready === false){
 						scope.trigger('ready');
@@ -140,7 +143,7 @@ export default class preloader extends module {
 			scope.__watcherTt = setInterval(() => {
 				if(value < scope.__status.loaded){
 					scope.params.methods.update(scope.__status);
-					value = scope.__status.loaded;
+					value = scope.__status.processed;
 				}
 			}, scope.params.watcher);
 		}
@@ -171,7 +174,7 @@ export default class preloader extends module {
 	 * @private
 	 */
 	__updateBar (status=null) {
-		let percent = parseInt(100 / status.total * status.loaded);
+		let percent = parseInt(100 / status.total * status.processed);
 
 		this.__$preloader
 			.find('.progress-bar')
@@ -196,7 +199,7 @@ export default class preloader extends module {
 	 */
 	__forceFinish (){
 		let status = this.__status;
-		status.loaded = status.total;
+		status.processed = status.total;
 		this.params.methods.update(status);
 		this.trigger('ready');
 	}
@@ -206,13 +209,15 @@ export default class preloader extends module {
 	 * @private
 	 */
 	__initHandlers () {
-		let _this = this;
+		let scope = this;
 
 		for(let i in this.__handlers){
+			this.__handlers[i].class.prototype.getApplicationInstance = scope.getApplicationInstance;
 			this.__handlers[i].instance = new this.__handlers[i].class();
 			this.__handlers[i].instance.on('progress', (status) => {
-				_this.__updateStatus(status)
-				_this.trigger('progress', _this.__status);
+				status.handler = this.__handlers[i].name;
+				scope.__updateStatus(status);
+				scope.trigger('progress', scope.__status);
 			});
 
 			this.__handlers[i].instance.initialize(this.__handlers[i].params);
@@ -228,14 +233,15 @@ export default class preloader extends module {
 	 */
 	__updateStatus (params={}){
 		this.__status.total = 0;
-		this.__status.loaded = 0;
+		this.__status.processed = 0;
+		this.__status.handler = (typeof params.handler != 'undefined') ? params.handler : null;
 		this.__status.src = (typeof params.src != 'undefined') ? params.src : null;
 		this.__status.desc = (typeof params.desc != 'undefined') ? params.desc : null;
 
 		for(let i in this.__handlers) {
 			let handlerStatus = this.__handlers[i].instance.getStatus();
 			this.__status.total += handlerStatus.total;
-			this.__status.loaded += handlerStatus.loaded;
+			this.__status.processed += handlerStatus.processed;
 		}
 	}
 }
