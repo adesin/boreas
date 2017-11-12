@@ -281,134 +281,6 @@ var _module3 = __webpack_require__(0);
 
 var _module4 = _interopRequireDefault(_module3);
 
-var _handlerItem = __webpack_require__(2);
-
-var _handlerItem2 = _interopRequireDefault(_handlerItem);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author Anton Desin <anton.desin@gmail.com>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @link http://pirogov.ru/ Бюро Пирогова
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Date: 13.06.2017
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Time: 9:37
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
-
-/**
- * Данный абстрактный класс используется для наследования от него обработчиков модуля preloader
- *
- * Обязатенльные методы:
- * initialize() - Производоит инициализацию обработчика
- * getStatus() - объект { total: N1, loaded: N2 }, где N1 - общее число загружаемых элементов, а N2 - число загруженных на данный момент  элементов
- *
- * Обязательно должны выполняться события:
- * progress - отдаёт прелодеру новое число загруженных элементов
- * ready - сообщает прелодеру, что обработчик загрузил все элементы
- *
- */
-var handler = function (_module) {
-	_inherits(handler, _module);
-
-	function handler() {
-		_classCallCheck(this, handler);
-
-		var _this = _possibleConstructorReturn(this, (handler.__proto__ || Object.getPrototypeOf(handler)).call(this));
-
-		var scope = _this;
-		scope.__registerEvents(['progress']);
-		scope.items = [];
-		scope.params = {};
-		return _this;
-	}
-
-	_createClass(handler, [{
-		key: "initialize",
-		value: function initialize() {
-			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-			var scope = this;
-			$.extend(true, scope.params, params);
-
-			scope.items.push(new _handlerItem2.default('Some Item'));
-			for (var k in items) {
-				items[k].trigger('ready');
-			}
-
-			scope.trigger('progress', scope.getStatus());
-			scope.trigger('ready');
-		}
-
-		/**
-   *
-   * @param item instance of handlerItem
-   */
-
-	}, {
-		key: "addItem",
-		value: function addItem(item) {
-			var scope = this;
-
-			var appInstance = scope.getApplicationInstance();
-			appInstance.preloader.__items.push(item);
-
-			console.log('adding handler item ' + item.name);
-
-			item.on('ready', function () {
-				console.log('loaded handler item ' + item.name);
-
-				var processed = 0;
-				for (var k in appInstance.preloader.__items) {
-					if (appInstance.preloader.__items[k].processed === true) {
-						processed++;
-					}
-				}
-
-				appInstance.preloader.trigger('progress', {
-					total: appInstance.preloader.__items.length,
-					processed: processed,
-					item: item
-				});
-			});
-		}
-	}, {
-		key: "getStatus",
-		value: function getStatus() {
-			var scope = this;
-
-			return {
-				total: 0,
-				loaded: 0,
-				src: null
-			};
-		}
-	}]);
-
-	return handler;
-}(_module4.default);
-
-exports.default = handler;
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-	value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _module3 = __webpack_require__(0);
-
-var _module4 = _interopRequireDefault(_module3);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -490,6 +362,134 @@ var handlerItem = function (_module) {
 }(_module4.default);
 
 exports.default = handlerItem;
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+	value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _module3 = __webpack_require__(0);
+
+var _module4 = _interopRequireDefault(_module3);
+
+var _handlerItem = __webpack_require__(1);
+
+var _handlerItem2 = _interopRequireDefault(_handlerItem);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author Anton Desin <anton.desin@gmail.com>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @link http://pirogov.ru/ Бюро Пирогова
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Date: 13.06.2017
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Time: 9:37
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+/**
+ * Данный абстрактный класс используется для наследования от него обработчиков модуля preloader
+ *
+ * Обязатенльные методы:
+ * initialize() - Производоит инициализацию обработчика
+ * getStatus() - объект { total: N1, loaded: N2 }, где N1 - общее число загружаемых элементов, а N2 - число загруженных на данный момент  элементов
+ *
+ * Обязательно должны выполняться события:
+ * progress - отдаёт прелодеру новое число загруженных элементов
+ * ready - сообщает прелодеру, что обработчик загрузил все элементы
+ *
+ */
+var handler = function (_module) {
+	_inherits(handler, _module);
+
+	function handler() {
+		_classCallCheck(this, handler);
+
+		var _this = _possibleConstructorReturn(this, (handler.__proto__ || Object.getPrototypeOf(handler)).call(this));
+
+		var scope = _this;
+		//scope.__registerEvents(['progress']);
+		//scope.items = [];
+		scope.params = {};
+		return _this;
+	}
+
+	_createClass(handler, [{
+		key: "initialize",
+		value: function initialize() {
+			var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+			var scope = this;
+			$.extend(true, scope.params, params);
+
+			scope.items.push(new _handlerItem2.default('Some Item'));
+			for (var k in items) {
+				items[k].trigger('ready');
+			}
+
+			//scope.trigger('progress', scope.getStatus());
+			scope.trigger('ready');
+		}
+
+		/**
+   *
+   * @param item instance of handlerItem
+   */
+
+	}, {
+		key: "addItem",
+		value: function addItem(item) {
+			var scope = this;
+
+			var appInstance = scope.getApplicationInstance();
+			appInstance.preloader.__items.push(item);
+
+			console.log('adding handler item ' + item.name);
+
+			item.on('ready', function () {
+				console.log('loaded handler item ' + item.name);
+
+				var processed = 0;
+				for (var k in appInstance.preloader.__items) {
+					if (appInstance.preloader.__items[k].processed === true) {
+						processed++;
+					}
+				}
+
+				appInstance.preloader.trigger('progress', {
+					total: appInstance.preloader.__items.length,
+					processed: processed,
+					item: item
+				});
+			});
+		}
+		/*
+  	getStatus () {
+  		let scope = this;
+  
+  		return {
+  			total: 0,
+  			loaded: 0,
+  			src: null,
+  		};
+  	}*/
+
+	}]);
+
+	return handler;
+}(_module4.default);
+
+exports.default = handler;
 
 /***/ }),
 /* 3 */
@@ -684,11 +684,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _handler2 = __webpack_require__(1);
+var _handler2 = __webpack_require__(2);
 
 var _handler3 = _interopRequireDefault(_handler2);
 
-var _handlerItem = __webpack_require__(2);
+var _handlerItem = __webpack_require__(1);
 
 var _handlerItem2 = _interopRequireDefault(_handlerItem);
 
@@ -1010,11 +1010,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _handler2 = __webpack_require__(1);
+var _handler2 = __webpack_require__(2);
 
 var _handler3 = _interopRequireDefault(_handler2);
 
-var _handlerItem = __webpack_require__(2);
+var _handlerItem = __webpack_require__(1);
 
 var _handlerItem2 = _interopRequireDefault(_handlerItem);
 
@@ -1100,7 +1100,7 @@ var mediaHandler = function (_handler) {
 				//if(source.preload == 'none'){
 				//source.load();
 				//}
-				scope.__total++;
+				//scope.__total++;
 
 				var tagName = source.tagName.toLowerCase();
 				var media = document.createElement(tagName);
@@ -2085,7 +2085,7 @@ exports.default = event;
 Object.defineProperty(exports, "__esModule", {
 	value: true
 });
-exports.loader = exports.network = exports.preloaderHandler = exports.extend = exports.module = exports.application = undefined;
+exports.loader = exports.network = exports.preloaderHandlerItem = exports.preloaderHandler = exports.extend = exports.module = exports.application = undefined;
 
 var _application = __webpack_require__(8);
 
@@ -2095,9 +2095,13 @@ var _module2 = __webpack_require__(0);
 
 var _module3 = _interopRequireDefault(_module2);
 
-var _handler = __webpack_require__(1);
+var _handler = __webpack_require__(2);
 
 var _handler2 = _interopRequireDefault(_handler);
+
+var _handlerItem = __webpack_require__(1);
+
+var _handlerItem2 = _interopRequireDefault(_handlerItem);
 
 var _extend = __webpack_require__(9);
 
@@ -2113,19 +2117,18 @@ var _loader2 = _interopRequireDefault(_loader);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/**
- * @author Anton Desin <anton.desin@gmail.com>
- * @link http://pirogov.ru/ Бюро Пирогова
- * Date: 08.06.2017
- * Time: 11:22
- */
-
 exports.application = _application2.default;
 exports.module = _module3.default;
 exports.extend = _extend2.default;
 exports.preloaderHandler = _handler2.default;
+exports.preloaderHandlerItem = _handlerItem2.default;
 exports.network = _network2.default;
-exports.loader = _loader2.default;
+exports.loader = _loader2.default; /**
+                                    * @author Anton Desin <anton.desin@gmail.com>
+                                    * @link http://pirogov.ru/ Бюро Пирогова
+                                    * Date: 08.06.2017
+                                    * Time: 11:22
+                                    */
 
 /***/ }),
 /* 13 */
@@ -2136,10 +2139,10 @@ var map = {
 	"./loader.js": 3,
 	"./preloader": 7,
 	"./preloader.js": 7,
-	"./preloader/handler": 1,
-	"./preloader/handler.js": 1,
-	"./preloader/handlerItem": 2,
-	"./preloader/handlerItem.js": 2,
+	"./preloader/handler": 2,
+	"./preloader/handler.js": 2,
+	"./preloader/handlerItem": 1,
+	"./preloader/handlerItem.js": 1,
 	"./preloader/imagesHandler": 5,
 	"./preloader/imagesHandler.js": 5,
 	"./preloader/mediaHandler": 6,

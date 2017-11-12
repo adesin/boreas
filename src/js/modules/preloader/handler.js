@@ -25,8 +25,8 @@ export default class handler extends module {
 		super();
 
 		let scope = this;
-		scope.__registerEvents(['progress']);
-		scope.items = [];
+		//scope.__registerEvents(['progress']);
+		//scope.items = [];
 		scope.params = {};
 	}
 
@@ -39,7 +39,7 @@ export default class handler extends module {
 			items[k].trigger('ready');
 		}
 
-		scope.trigger('progress', scope.getStatus());
+		//scope.trigger('progress', scope.getStatus());
 		scope.trigger('ready');
 	}
 
@@ -72,7 +72,7 @@ export default class handler extends module {
 			});
 		});
 	}
-
+/*
 	getStatus () {
 		let scope = this;
 
@@ -81,5 +81,5 @@ export default class handler extends module {
 			loaded: 0,
 			src: null,
 		};
-	}
+	}*/
 }

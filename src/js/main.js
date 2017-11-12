@@ -8,6 +8,7 @@
 import application from './lib/application';
 import module from './lib/module';
 import handler from './modules/preloader/handler';
+import handlerItem from './modules/preloader/handlerItem';
 import extend from './lib/extend';
 import network from './lib/network';
 import loader from './modules/loader';
@@ -17,6 +18,7 @@ export {
 	module,
 	extend,
 	handler as preloaderHandler,
+	handlerItem as preloaderHandlerItem,
 	network,
 	loader
 };

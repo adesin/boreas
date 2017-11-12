@@ -61,9 +61,7 @@ export default class mediaHandler extends handler {
 			//if(source.preload == 'none'){
 				//source.load();
 			//}
-			scope.__total++;
-
-
+			//scope.__total++;
 
 			let tagName = source.tagName.toLowerCase();
 			let media = document.createElement(tagName);
@@ -73,7 +71,7 @@ export default class mediaHandler extends handler {
 			scope.addItem(item);
 
 			media.load();
-			
+
 			//console.log('Starting load media: ' + source.currentSrc);
 
 			let resolveItem = () => {
