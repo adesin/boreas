@@ -1509,24 +1509,18 @@ var preloader = function (_module) {
 	}, {
 		key: "__initHandlers",
 		value: function __initHandlers() {
-			var _this2 = this;
-
 			var scope = this;
 
-			var _loop = function _loop(i) {
-				_this2.__handlers[i].class.prototype.getApplicationInstance = scope.getApplicationInstance;
-				_this2.__handlers[i].instance = new _this2.__handlers[i].class();
-				_this2.__handlers[i].instance.on('progress', function (status) {
-					status.handler = _this2.__handlers[i].name;
-					scope.__updateStatus(status);
-					scope.trigger('progress', scope.__status);
-				});
-
-				_this2.__handlers[i].instance.initialize(_this2.__handlers[i].params);
-			};
-
 			for (var i in this.__handlers) {
-				_loop(i);
+				this.__handlers[i].class.prototype.getApplicationInstance = scope.getApplicationInstance;
+				this.__handlers[i].instance = new this.__handlers[i].class();
+				/*this.__handlers[i].instance.on('progress', (status) => {
+    	status.handler = this.__handlers[i].name;
+    	scope.__updateStatus(status);
+    	scope.trigger('progress', scope.__status);
+    });*/
+
+				this.__handlers[i].instance.initialize(this.__handlers[i].params);
 			}
 		}
 

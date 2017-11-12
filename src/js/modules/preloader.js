@@ -214,11 +214,11 @@ export default class preloader extends module {
 		for(let i in this.__handlers){
 			this.__handlers[i].class.prototype.getApplicationInstance = scope.getApplicationInstance;
 			this.__handlers[i].instance = new this.__handlers[i].class();
-			this.__handlers[i].instance.on('progress', (status) => {
+			/*this.__handlers[i].instance.on('progress', (status) => {
 				status.handler = this.__handlers[i].name;
 				scope.__updateStatus(status);
 				scope.trigger('progress', scope.__status);
-			});
+			});*/
 
 			this.__handlers[i].instance.initialize(this.__handlers[i].params);
 		}
